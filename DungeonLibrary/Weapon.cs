@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace DungeonLibrary
 {
-    public class Weapon
+    public class Weapon 
     {
         private int _minDamage;
-        private int _maxDamage;
-        private string _name;
-        private bool _isTwoHanded;
 
         public int MinDamage
         {
@@ -28,32 +25,26 @@ namespace DungeonLibrary
                 }
             }
         }
-
-        public int MaxDamage
-        {
-            get { return _maxDamage; }
-            set { _maxDamage = value; }
-        }
-        
-        private string Name
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
-        private bool IsTwoHanded
-        {
-            get { return _isTwoHanded; }
-            set { _isTwoHanded = value; }
-        }
-
-        public Weapon(int minDamage, int maxDamage,string name, bool isTwoHanded )
+        public int BonusHitChance { get; set; }
+        public int MaxDamage { get; set; }
+        public bool IsTwoHanded { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public Weapon(int minDamage, int maxDamage,string name,int bonusHitChance, bool isTwoHanded,string description )
         {
             MaxDamage = maxDamage;
             MinDamage = minDamage;
             Name = name;
             IsTwoHanded = isTwoHanded;
+            BonusHitChance = bonusHitChance;
+            Description = description;
+        }
+        public override string ToString()
+        {
+            return string.Format("******** {0} ********\n{1}\n{2} - {3} dmg dealt", Name,Description,MinDamage,MaxDamage);
         }
 
-        
+
+
     }
 }
