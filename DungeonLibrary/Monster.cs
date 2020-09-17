@@ -69,7 +69,10 @@ namespace DungeonLibrary
                 Agility,
                 Description);
         }
-
+        public int GetStats()
+        {
+            return MaxLife + Evasion + Agility + MaxDamage + Block;
+        }
         //We are overriding the CalcDamage() to use the properties of MinDamage and MaxDamage
         public override int CalcDamage()
         {
@@ -79,6 +82,7 @@ namespace DungeonLibrary
             //Then we would never be able to get back 8. This is because the MaxValue in the Next()
             //is exclusive.
         }
+
 
 
 

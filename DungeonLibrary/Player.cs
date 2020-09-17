@@ -22,11 +22,12 @@ namespace DungeonLibrary
 
         public Race CharacterRace { get; set; }
         public Weapon EquippedWeapon { get; set; }
+        public int Exp { get; set; }
+        public int Lvl { get; set; }
 
         //ctors
         //Only going to make a FQCTOR....we do NOT want to allow anyone to make a player that does not have values 
         //for all of the properies
-
         public Player(string name, int hitChance, int block, int life, int maxLife, int strength, int defense,int evasion, int agility, Race characterRace, Weapon equippedWeapon)
         {
             MaxLife = maxLife;
@@ -40,6 +41,8 @@ namespace DungeonLibrary
             Agility = agility;
             CharacterRace = characterRace;
             EquippedWeapon = equippedWeapon;
+            Exp = 0;
+            Lvl = 0;
 
             //We will modify the HitChance of a Player based on their race
             switch (CharacterRace)
@@ -106,7 +109,7 @@ namespace DungeonLibrary
                     break;
 
             }
-            return string.Format("******** {0} ******\nLife: {1} of {2}\nHit Chane: {3}%\nWeapon:{4}\nStrength: {5}\tDefense: {6}\tBlock: {7}\nEvasion: {8}\tAgility {9}\nRace: {10}",
+            return string.Format("******** {0} ******\nLife: {1} of {2}\nHit Chane: {3}%\nWeapon:{4}\nStrength: {5}\tDefense: {6}\tBlock: {7}\nEvasion: {8}\tAgility {9}\nRace: {10}\nLvl: {11}\nExp: {12}\nExp till next lvl: {13}",
                 Name,
                 Life,
                 MaxLife,
@@ -117,7 +120,10 @@ namespace DungeonLibrary
                 Block,
                 Evasion,
                 Agility,
-                description);
+                description,
+                Lvl,
+                Exp,
+                ((50 + (50 * Math.Pow(Lvl, 2)))-Exp));
         }
 
         //Overriding the CalcDamage in player to use their weapon's property of MinDamage and MaxDamage
@@ -137,5 +143,38 @@ namespace DungeonLibrary
         {
             return base.CalcHitChance() + EquippedWeapon.BonusHitChance;
         }
+        public void DetermineLevelUp()
+        {
+            int lvlUps = 0;
+            while (Exp >= (50 + (50 * Math.Pow(Lvl, 2))))
+            {
+                lvlUps++;
+                Lvl++;
+            }
+            if (lvlUps > 0)
+            {
+                Console.WriteLine("{0} Leveled Up {1} time{2}\nHp: {3} + {4}\nStrength: {5} + {6}\nDefense: {7} + {8}",
+                    Name,
+                    lvlUps,
+                    lvlUps > 1 ? "s" : "",
+                    MaxLife,
+                    (5 * lvlUps),
+                    Strength,
+                    (2 * lvlUps),
+                    Defense,
+                    (1 * lvlUps));
+                    
+
+                LevelUpStats(lvlUps);
+            }
+        }
+        private void LevelUpStats(int lvlups)
+        {
+            MaxLife += 4 * lvlups;
+            Strength += 2 * lvlups;
+            Intelligence += 2 * lvlups;
+            Defense += 1 * lvlups;
+        }
+
     }
 }

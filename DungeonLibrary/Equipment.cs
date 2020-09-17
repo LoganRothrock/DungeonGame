@@ -10,19 +10,15 @@ namespace DungeonLibrary
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public double BonusDamage { get; set; }
-        public double BonusDefense { get; set; }
-        public double BonusEvasion { get; set; }
-        public double BonusBlock { get; set; }
+        public float BonusDamage { get; set; }
+        public float BonusDefense { get; set; }
+        public float BonusEvasion { get; set; }
+        public float BonusBlock { get; set; }
         public string Rarity { get; set; }
 
         public Equipment(string name, string description)
         {
-            BonusBlock = 0.0;
-            BonusDamage = 0.0;
-            BonusDefense = 0.0;
-            BonusEvasion = 0.0;
-            Random rand = new Random();
+
             Name = name;
             Description = description;
             Modifiers();
@@ -54,25 +50,25 @@ namespace DungeonLibrary
                         int mod = rand.Next(4);
                         if (mod == 0 && dmg == true)
                         {
-                            BonusDamage += rand.Next(5);
+                            BonusDamage += rand.Next(1,6);
                             dmg = false;
                             modified = true;
                         }
                         else if (mod == 1 && def == true)
                         {
-                            BonusDefense += rand.Next(5);
+                            BonusDefense += rand.Next(1,6);
                             def = false;
                             modified = true;
                         }
                         else if (mod == 2 && ev == true)
                         {
-                            BonusEvasion += rand.Next(2);
+                            BonusEvasion += rand.Next(1,6);
                             ev = false;
                             modified = true;
                         }
                         else if (mod == 3 && bl == true)
                         {
-                            BonusBlock += rand.Next(5);
+                            BonusBlock += rand.Next(1,6);
                             bl = false;
                             modified = true;
                         }
@@ -92,26 +88,26 @@ namespace DungeonLibrary
             else if (rarity > 40 && rarity <= 65)
             {
                 Rarity = "Uncommon";
-                BonusDamage *= 1.25;
-                BonusDefense *= 1.25;
-                BonusEvasion *= 1.25;
-                BonusBlock *= 1.25;
+                BonusDamage *= 1.25f;
+                BonusDefense *= 1.25f;
+                BonusEvasion *= 1.25f;
+                BonusBlock *= 1.25f;
             }
             else if (rarity > 65 && rarity <= 80)
             {
                 Rarity = "Rare";
-                BonusDamage *= 1.5;
-                BonusDefense *= 1.5;
-                BonusEvasion *= 1.5;
-                BonusBlock *= 1.5;
+                BonusDamage *= 1.5f;
+                BonusDefense *= 1.5f;
+                BonusEvasion *= 1.5f;
+                BonusBlock *= 1.5f;
             }
             else if (rarity > 80 && rarity <= 90)
             {
                 Rarity = "Epic";
-                BonusDamage *= 1.75;
-                BonusDefense *= 1.75;
-                BonusEvasion *= 1.75;
-                BonusBlock *= 1.75;
+                BonusDamage *= 1.75f;
+                BonusDefense *= 1.75f;
+                BonusEvasion *= 1.75f;
+                BonusBlock *= 1.75f;
             }
             else if (rarity > 90 && rarity <= 97)
             {
@@ -124,10 +120,10 @@ namespace DungeonLibrary
             else if (rarity > 97)
             {
                 Rarity = "Mythical";
-                BonusDamage *= 2.25;
-                BonusDefense *= 2.25;
-                BonusEvasion *= 2.25;
-                BonusBlock *= 2.25;
+                BonusDamage *= 2.25f;
+                BonusDefense *= 2.25f;
+                BonusEvasion *= 2.25f;
+                BonusBlock *= 2.25f;
 
             }
         }

@@ -6,8 +6,13 @@ using System.Threading.Tasks;
 
 namespace DungeonLibrary
 {
-    class Item
+    public class Item
     {
+        public int Name { get; set; }
+        public string Description { get; set; }
+        public string Effect { get; set; }
+        public int EffectStrength { get; set; }
 
     }
+    
 }
