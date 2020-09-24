@@ -19,6 +19,8 @@ namespace DungeonLibrary
         public int Intelligence { get; set; }
         public int Agility { get; set; }
         public int Evasion { get; set; }
+        //UsedTurn is used for various status effects and item using
+        public bool UsedTurn { get; set; }
 
         public int Life
         {

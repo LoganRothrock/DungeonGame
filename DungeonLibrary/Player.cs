@@ -43,6 +43,7 @@ namespace DungeonLibrary
             EquippedWeapon = equippedWeapon;
             Exp = 0;
             Lvl = 0;
+            UsedTurn = false;
 
             //We will modify the HitChance of a Player based on their race
             switch (CharacterRace)
@@ -163,8 +164,6 @@ namespace DungeonLibrary
                     (2 * lvlUps),
                     Defense,
                     (1 * lvlUps));
-                    
-
                 LevelUpStats(lvlUps);
             }
         }

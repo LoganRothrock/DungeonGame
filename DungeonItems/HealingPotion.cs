@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using DungeonLibrary;
 namespace DungeonItems
 {
-    public class HealingPotion : Item
+    public class HealingPotion
     {
-        public HealingPotion(string name, string description, )
-        {
+        //public HealingPotion(string name, string description, )
+        //{
 
-        }
+        //}
 
     }
 }

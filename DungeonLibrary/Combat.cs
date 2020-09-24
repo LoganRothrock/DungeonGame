@@ -11,13 +11,13 @@ namespace DungeonLibrary
         //This class will not have fields, properies, or any custom constructors. It is just a 
         //"warehouse" for different methods
 
-        public static void DoAttack(Character attacker, Character defender)
+        public static void DoAttack(Character attacker, Character defender, bool usedTurn)
         {
             //get random number from 1-100 as our dice roll
             Random rand = new Random();
             int diceRoll = rand.Next(1, 101);
             System.Threading.Thread.Sleep(30);
-            if (diceRoll <= (attacker.CalcHitChance() - defender.CalcEvasion()))
+            if (diceRoll <= (attacker.CalcHitChance() - defender.CalcEvasion()) && usedTurn == false)
             {
                 //the attacker hit
                 int damageDealt = attacker.CalcDamage()-defender.Defense;
@@ -37,36 +37,34 @@ namespace DungeonLibrary
                 }
 
             }
-            else
+            else if (diceRoll >= (attacker.CalcHitChance() - defender.CalcEvasion()))
             {
                 Console.WriteLine("{0} missed!", attacker.Name);
             }
+            attacker.UsedTurn = false;
+        }   
 
-        }
-
-        public static void DoBattle(Player player, Monster monster)
+            public static void DoBattle(Player player, Monster monster)
         {
             //checks players and monsters agility to determine who goes first
             if(player.Agility >= monster.Agility)
             {
-                DoAttack(player, monster);
+                DoAttack(player, monster, player.UsedTurn);
                 //makes sure other party isn't dead
                 if (monster.Life > 0)
                 {
-                    DoAttack(monster, player);
+                    DoAttack(monster, player, monster.UsedTurn);
                 }
             }
             else if (player.Agility < monster.Agility)
             {
-                DoAttack(monster, player);
+                DoAttack(monster, player, monster.UsedTurn);
                 //makes sure other party isn't dead
                 if (player.Life > 0)
                 {
-                    DoAttack(player, monster);
+                    DoAttack(player, monster, player.UsedTurn);
                 }
             }
-
-
             
         }
 

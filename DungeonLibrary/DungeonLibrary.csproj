@@ -45,6 +45,7 @@
     <Compile Include="Character.cs" />
     <Compile Include="Combat.cs" />
     <Compile Include="Equipment.cs" />
+    <Compile Include="Inventory.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="Monster.cs" />
     <Compile Include="Monsters.cs" />

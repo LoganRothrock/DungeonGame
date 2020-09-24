@@ -16,6 +16,7 @@ namespace DungeonLibrary
         public float BonusBlock { get; set; }
         public string Rarity { get; set; }
 
+        Random rand = new Random();
         public Equipment(string name, string description)
         {
 
@@ -24,6 +25,7 @@ namespace DungeonLibrary
             Modifiers();
             DetermineRarity();
         }
+
         public override string ToString()
         {
             
@@ -38,16 +40,16 @@ namespace DungeonLibrary
         }
         private void Modifiers()
         {
-            Random rand = new Random();
+            int modAmount = RandomInt(0, 101);
             bool dmg = true, def = true, ev = true, bl = true;
             for (int i = 0; i <= 3; i++)
             {
-                if (rand.Next(101) > ((i*25)))
+                if (modAmount > ((i*25)))
                 {
                     bool modified = false;
                     do
                     {
-                        int mod = rand.Next(4);
+                        int mod = RandomInt(0, 4);
                         if (mod == 0 && dmg == true)
                         {
                             BonusDamage += rand.Next(1,6);
@@ -79,8 +81,7 @@ namespace DungeonLibrary
         }
         private void DetermineRarity()
         {
-            Random rand = new Random();
-            int rarity = rand.Next(101);
+            int rarity = RandomInt(0, 101);
             if (rarity <=40)
             {
                 Rarity = "Common";
@@ -126,6 +127,11 @@ namespace DungeonLibrary
                 BonusBlock *= 2.25f;
 
             }
+        }
+        public static int RandomInt(int first, int last)
+        {
+            Random rand = new Random();
+            return rand.Next(first, last);
         }
 
     }

@@ -47,6 +47,7 @@ namespace DungeonLibrary
             Block = block;
             Evasion = evasion;
             Agility = agility;
+            UsedTurn = false;
         }
         public Monster()
         {
