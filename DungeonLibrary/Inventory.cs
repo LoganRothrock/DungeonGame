@@ -26,31 +26,40 @@ namespace DungeonLibrary
         public string ShowItems()
         {
             string showItems = "";
+            int list = 1;
             foreach (Item item in Items)
             {
                 if (item.Count > 0)
                 {
-                    showItems += item.Name + "\n";
+                    showItems += list + ") " + item.Name + " carrying " + item.Count + "\n";
+                    list++;
                 }
             }
+            showItems += list + ") EXIT";
             return showItems;
         }
         public string ShowEquipment()
         {
             string showEquipment = "";
+            int list = 1;
             foreach (Equipment equipment in Equipments)
             {
-                showEquipment += equipment.Rarity + " " + equipment.Name + ": " + equipment.Description + "\n";
+                showEquipment += list + ") " + equipment.Rarity + " " + equipment.Name + ": " + equipment.Description + "\n";
+                list++;
             }
+            showEquipment += list + ") EXIT";
             return showEquipment;
         }
         public string ShowWeapons()
         {
             string showWeapons = "";
+            int list = 1;
             foreach (Weapon weapon in Weapons)
             {
-                showWeapons += weapon.Name + ": " + weapon.Description + "\n";
+                showWeapons += list + ") " + weapon.Name + ": " + weapon.Description + "\n";
+                list++;
             }
+            showWeapons += list + ") EXIT";
             return showWeapons;
         }
     }

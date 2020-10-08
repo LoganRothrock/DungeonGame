@@ -15,6 +15,9 @@ namespace DungeonLibrary
         public float BonusEvasion { get; set; }
         public float BonusBlock { get; set; }
         public string Rarity { get; set; }
+        public bool IsEquipped { get; set; }
+        public string Type { get; set; }
+
 
         Random rand = new Random();
         public Equipment(string name, string description)
@@ -24,6 +27,8 @@ namespace DungeonLibrary
             Description = description;
             Modifiers();
             DetermineRarity();
+            IsEquipped = false;
+            Type = Name;
         }
 
         public override string ToString()
@@ -133,6 +138,53 @@ namespace DungeonLibrary
             Random rand = new Random();
             return rand.Next(first, last);
         }
+        //TODO Add specification to make sure the right equipment is being added
+        public static void Equip(Player player, Equipment equipment)
+        {
+            if (!equipment.IsEquipped)
+            {
+                if (equipment.Type == "Helmet" && player.EquippedHelmet == null)
+                {
+                    equipment.IsEquipped = true;
+                    player.Strength += (int)equipment.BonusDamage;
+                    player.Defense += (int)equipment.BonusDefense;
+                    player.Evasion += (int)equipment.BonusEvasion;
+                }
+                else if (equipment.Type == "ChestPlate" && player.EquippedChestplate == null)
+                {
+                    equipment.IsEquipped = true;
+                    player.Strength += (int)equipment.BonusDamage;
+                    player.Defense += (int)equipment.BonusDefense;
+                    player.Evasion += (int)equipment.BonusEvasion;
+                }
+                else
+                {
+                    Console.WriteLine("You already have equipment equipped in that slot!");
+                }
 
+            }
+            else
+            {
+                Console.WriteLine("You already have this item equipped!");
+            }
+        }
+        //TODO Add equipment type to specify what type of equipment will be removed
+        public static void UnEquip(Player player, Equipment equipment)
+        {
+            player.Strength -= (int)equipment.BonusDamage;
+            player.Defense -= (int)equipment.BonusDefense;
+            player.Evasion -= (int)equipment.BonusEvasion;
+            equipment.IsEquipped = false;
+            if (equipment.Name == "ChestPlate" || equipment.Type == "ChestPlate") {
+                player.EquippedChestplate = null;
+            }
+            else if (equipment.Name == "Helmet" || equipment.Type == "Helmet")
+            {
+                player.EquippedHelmet = null;
+            }
+            {
+
+            }
+        }
     }
 }

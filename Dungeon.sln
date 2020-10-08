@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DungeonMonster", "DungeonMo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DungeonItems", "DungeonItems\DungeonItems.csproj", "{2A1D4994-34DA-40B0-B573-FDE5FEFFB35E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StatusEffects", "Status\StatusEffects.csproj", "{8E9C646B-0124-4E2B-8D9F-F4DB9D9703F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{2A1D4994-34DA-40B0-B573-FDE5FEFFB35E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A1D4994-34DA-40B0-B573-FDE5FEFFB35E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A1D4994-34DA-40B0-B573-FDE5FEFFB35E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E9C646B-0124-4E2B-8D9F-F4DB9D9703F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E9C646B-0124-4E2B-8D9F-F4DB9D9703F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E9C646B-0124-4E2B-8D9F-F4DB9D9703F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E9C646B-0124-4E2B-8D9F-F4DB9D9703F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

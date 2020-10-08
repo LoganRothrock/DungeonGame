@@ -22,6 +22,8 @@ namespace DungeonLibrary
 
         public Race CharacterRace { get; set; }
         public Weapon EquippedWeapon { get; set; }
+        public Equipment EquippedChestplate { get; set; }
+        public Equipment EquippedHelmet { get; set; }
         public int Exp { get; set; }
         public int Lvl { get; set; }
 

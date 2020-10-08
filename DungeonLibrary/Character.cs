@@ -21,6 +21,8 @@ namespace DungeonLibrary
         public int Evasion { get; set; }
         //UsedTurn is used for various status effects and item using
         public bool UsedTurn { get; set; }
+        public List<Status> StatusEffects { get; set; }
+        public int statusDuration { get; set; }
 
         public int Life
         {

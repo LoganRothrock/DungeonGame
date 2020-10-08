@@ -37,7 +37,7 @@ namespace DungeonLibrary
                 {
                     player.Life += item.EffectStrength;
                     player.UsedTurn = true;
-                    Console.WriteLine(player.Name + " retored " + item.EffectStrength + " health!");
+                    Console.WriteLine(player.Name + " restored " + item.EffectStrength + " health!");
                     Combat.DoAttack(monster, player, player.UsedTurn);
                 }
                 else if (item.Effect == "DMG")
