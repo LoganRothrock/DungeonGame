@@ -28,21 +28,23 @@ namespace DungeonLibrary
             UserUI roomInfo = new UserUI(31, 10);
             UserUI BattleArea = new UserUI(40, 25);
             UserUI raceInfo = new UserUI(25, 10);
+            UserUI battleInfo = new UserUI(31, 5);
             List<UserUI> boxes = new List<UserUI>();
             boxes.Add(playerMenu);
             boxes.Add(playerInv);
             boxes.Add(roomInfo);
             boxes.Add(BattleArea);
             boxes.Add(raceInfo);
+            boxes.Add(battleInfo);
             Boxes = boxes;
         }
         public static void GenerateBattleScreen(List<UserUI> boxes)
         {
             UserUI.MakeBoxAtPosition(boxes[0], 0, 0);
             UserUI.MakeBoxAtPosition(boxes[1], 16, 0);
-            UserUI.MakeBoxAtPosition(boxes[2], 0, 10);
+            UserUI.MakeBoxAtPosition(boxes[5], 0, 10);
             UserUI.MakeBoxAtPosition(boxes[3], 40, 0);
-
+            UserUI.MakeBoxAtPosition(boxes[2], 0, 15);
         }
         public string MakeBox(int width, int height)
         {

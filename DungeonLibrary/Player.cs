@@ -62,7 +62,7 @@ namespace DungeonLibrary
                 case Race.Goblin:
                     Agility += 3;
                     break;
-                case Race.Firbolg:
+                case Race.Beastmen:
                     break;
                 case Race.Dwarf:
                     MaxLife += 10;
@@ -98,8 +98,8 @@ namespace DungeonLibrary
                 case Race.Goblin:
                     description = "Goblin";
                     break;
-                case Race.Firbolg:
-                    description = "Firbolg";
+                case Race.Beastmen:
+                    description = "Beastmen";
                     break;
                 case Race.Dwarf:
                     description = "Dwarf";

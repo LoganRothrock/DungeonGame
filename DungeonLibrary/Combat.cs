@@ -25,6 +25,7 @@ namespace DungeonLibrary
                 if (damageDealt <=0)
                 {
                     //write the result out to the screen
+                    UserUI.TextFormatter(UserUI.,$"{attacker.Name} hit {defender.Name} for 0 damage!", 1, 30);
                     Console.WriteLine("{0} hit {1} for 0 damage!", attacker.Name, defender.Name);
                 }
                 else

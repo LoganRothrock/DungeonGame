@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace DungeonLibrary
 {
+
     public enum Race
     {
-        
         Orc,
         Elf,
         Goblin,
-        Firbolg,
+        Beastmen,
         Dwarf,
         Human,
         Wizard,
