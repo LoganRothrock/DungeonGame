@@ -8,6 +8,18 @@ namespace DungeonLibrary
 {
     public class Equipment
     {
+
+        private int _value;
+        public int Value { get { return _value; } set {
+                if (value < 0)
+                {
+                    value = 0;
+                }
+                else
+                {
+                    _value = value;
+                }
+            } }
         public string Name { get; set; }
         public string Description { get; set; }
         public float BonusDamage { get; set; }
@@ -27,6 +39,7 @@ namespace DungeonLibrary
             Description = description;
             Modifiers();
             DetermineRarity();
+            DetermineValue();
             IsEquipped = false;
             Type = Name;
         }
@@ -34,14 +47,18 @@ namespace DungeonLibrary
         public override string ToString()
         {
             
-            return string.Format("*********{0} {1}**********\n{2}\nBonus Damage: {3}\nBonus Defense: {4}\nBonus Evasion: {5}\nBonus Block: {6}",
+            return string.Format("**{0} {1}**\n|Bonus Damage: {2}\n|Bonus Defense: {3}\n|Bonus Evasion: {4}\n|Bonus Block: {5}\n|Value: {6}",
                 Rarity,
                 Name,
-                Description,
                 BonusDamage,
                 BonusDefense,
                 BonusEvasion,
-                BonusBlock);
+                BonusBlock,
+                Value);
+        }
+        private void DetermineValue()
+        {
+            Value = (int)((BonusBlock + BonusDamage + BonusDefense + BonusEvasion) * 1.50);
         }
         private void Modifiers()
         {
@@ -157,10 +174,6 @@ namespace DungeonLibrary
                     player.Defense += (int)equipment.BonusDefense;
                     player.Evasion += (int)equipment.BonusEvasion;
                 }
-                else
-                {
-                    Console.WriteLine("You already have equipment equipped in that slot!");
-                }
 
             }
             else
@@ -168,17 +181,18 @@ namespace DungeonLibrary
                 Console.WriteLine("You already have this item equipped!");
             }
         }
-        //TODO Add equipment type to specify what type of equipment will be removed
-        public static void UnEquip(Player player, Equipment equipment)
-        {
+
+            //TODO Add equipment type to specify what type of equipment will be removed
+            public static void UnEquip(Player player, Equipment equipment)
+            {
             player.Strength -= (int)equipment.BonusDamage;
             player.Defense -= (int)equipment.BonusDefense;
             player.Evasion -= (int)equipment.BonusEvasion;
             equipment.IsEquipped = false;
-            if (equipment.Name == "ChestPlate" || equipment.Type == "ChestPlate") {
+            if (equipment.Type == "ChestPlate") {
                 player.EquippedChestplate = null;
             }
-            else if (equipment.Name == "Helmet" || equipment.Type == "Helmet")
+            else if (equipment.Type == "Helmet")
             {
                 player.EquippedHelmet = null;
             }

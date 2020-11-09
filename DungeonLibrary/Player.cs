@@ -15,15 +15,31 @@ namespace DungeonLibrary
         //No more inheritance can occur.
 
         //fields
-
+        private int _gold;
         //properties
         //Automatic property Syntax - allows us to create a shortened version of a public property with 
         //NO biz rules. The fields are created automatically at runtime. They have an open getter and setter.
-
+        public int Gold { get { return _gold; } set {
+                if (value < 0)
+                {
+                    _gold = 0;
+                }
+                else if (value > 1000)
+                {
+                    _gold = 1000;
+                }
+                else
+                {
+                    _gold = value;
+                }
+            } }
         public Race CharacterRace { get; set; }
         public Weapon EquippedWeapon { get; set; }
         public Equipment EquippedChestplate { get; set; }
         public Equipment EquippedHelmet { get; set; }
+        public List<Item> Items { get; set; }
+        public List<Equipment> Equipments { get; set; }
+        public List<Weapon> Weapons { get; set; }
         public int Exp { get; set; }
         public int Lvl { get; set; }
 
@@ -43,9 +59,14 @@ namespace DungeonLibrary
             Agility = agility;
             CharacterRace = characterRace;
             EquippedWeapon = equippedWeapon;
+            Gold = 0;
             Exp = 0;
             Lvl = 0;
             UsedTurn = false;
+            Weapons = new List<Weapon>();
+            Items = new List<Item>();
+            Equipments = new List<Equipment>();
+            equippedWeapon.IsEquipped = true;
 
             //We will modify the HitChance of a Player based on their race
             switch (CharacterRace)
@@ -112,7 +133,7 @@ namespace DungeonLibrary
                     break;
 
             }
-            return string.Format("******** {0} ******\nLife: {1} of {2}\nHit Chane: {3}%\nWeapon:{4}\nStrength: {5}\tDefense: {6}\tBlock: {7}\nEvasion: {8}\tAgility {9}\nRace: {10}\nLvl: {11}\nExp: {12}\nExp till next lvl: {13}",
+            return string.Format("******** {0} ******\n|Life: {1} of {2}\n|Hit Chane: {3}%\n|Weapon:{4}\n|Strength: {5}\tDefense: {6}\n|Block: {7}\tEvasion: {8}\n|Agility: {9}\tRace: {10}\n|Lvl: {11}\tExp: {12}\n|Exp till next lvl: {13}",
                 Name,
                 Life,
                 MaxLife,
@@ -146,7 +167,7 @@ namespace DungeonLibrary
         {
             return base.CalcHitChance() + EquippedWeapon.BonusHitChance;
         }
-        public void DetermineLevelUp()
+        public void DetermineLevelUp(int startRow)
         {
             int lvlUps = 0;
             while (Exp >= (50 + (50 * Math.Pow(Lvl, 2))))
@@ -154,9 +175,11 @@ namespace DungeonLibrary
                 lvlUps++;
                 Lvl++;
             }
+            
             if (lvlUps > 0)
             {
-                Console.WriteLine("{0} Leveled Up {1} time{2}\nHp: {3} + {4}\nStrength: {5} + {6}\nDefense: {7} + {8}",
+                Console.SetCursorPosition(1, startRow);
+                Console.WriteLine("{0} Leveled Up {1} time{2}\n|Hp: {3} + {4}  Strength: {5} + {6}\n|Defense: {7} + {8}",
                     Name,
                     lvlUps,
                     lvlUps > 1 ? "s" : "",
@@ -176,6 +199,69 @@ namespace DungeonLibrary
             Intelligence += 2 * lvlups;
             Defense += 1 * lvlups;
         }
+        public void AddItem(Item item)
+        {
+            Items.Add(item);
+        }
+        public void AddWeapon(Weapon weapon)
+        {
+            Weapons.Add(weapon);
+        }
+        public void AddEquipment(Equipment equipment)
+        {
+            Equipments.Add(equipment);
+        }
 
+
+        public void EquipEquipment(Player player, Equipment equipment)
+        {
+            //Checks to make sure the Equipment that the player wants to equip isn't already equipped
+            if (!equipment.IsEquipped)
+            {
+                //Handles the "Unequip" portion
+                if (equipment.Type == "Helmet" && player.EquippedHelmet != null)
+                {
+                    player.Strength -= (int)player.EquippedHelmet.BonusDamage;
+                    player.Defense -= (int)player.EquippedHelmet.BonusDefense;
+                    player.Evasion -= (int)player.EquippedHelmet.BonusEvasion;
+                    player.EquippedHelmet.IsEquipped = false;
+                    player.EquippedHelmet = null;
+                }
+                else if (equipment.Type == "ChestPlate" && player.EquippedChestplate != null)
+                {
+                    player.Strength -= (int)player.EquippedChestplate.BonusDamage;
+                    player.Defense -= (int)player.EquippedChestplate.BonusDefense;
+                    player.Evasion -= (int)player.EquippedChestplate.BonusEvasion;
+                    player.EquippedChestplate.IsEquipped = false;
+                    player.EquippedChestplate = null;
+                }
+                //Handles the "Equip" portion
+                if (equipment.Type == "Helmet" && player.EquippedHelmet == null)
+                {
+                    equipment.IsEquipped = true;
+                    player.EquippedHelmet = equipment;
+                    player.Strength += (int)equipment.BonusDamage;
+                    player.Defense += (int)equipment.BonusDefense;
+                    player.Evasion += (int)equipment.BonusEvasion;
+                }
+                else if (equipment.Type == "ChestPlate" && player.EquippedChestplate == null)
+                {
+                    equipment.IsEquipped = true;
+                    player.EquippedChestplate = equipment;
+                    player.Strength += (int)equipment.BonusDamage;
+                    player.Defense += (int)equipment.BonusDefense;
+                    player.Evasion += (int)equipment.BonusEvasion;
+                }
+
+            }
+        }
+        public void EquipWeapon(Player player, Weapon weapon)
+        {
+            if (player.EquippedWeapon != weapon)
+            {
+                weapon.IsEquipped = true;
+                player.EquippedWeapon = weapon;
+            }
+        }
     }
 }

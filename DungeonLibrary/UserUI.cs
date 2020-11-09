@@ -28,14 +28,18 @@ namespace DungeonLibrary
             UserUI roomInfo = new UserUI(31, 10);
             UserUI BattleArea = new UserUI(40, 25);
             UserUI raceInfo = new UserUI(25, 10);
-            UserUI battleInfo = new UserUI(31, 5);
-            List<UserUI> boxes = new List<UserUI>();
-            boxes.Add(playerMenu);
-            boxes.Add(playerInv);
-            boxes.Add(roomInfo);
-            boxes.Add(BattleArea);
-            boxes.Add(raceInfo);
-            boxes.Add(battleInfo);
+            UserUI battleInfo = new UserUI(31, 11);
+            UserUI shopScreen = new UserUI(31, 16);
+            List<UserUI> boxes = new List<UserUI>
+            {
+                playerMenu,
+                playerInv,
+                roomInfo,
+                BattleArea,
+                raceInfo,
+                battleInfo,
+                shopScreen
+            };
             Boxes = boxes;
         }
         public static void GenerateBattleScreen(List<UserUI> boxes)
@@ -43,8 +47,14 @@ namespace DungeonLibrary
             UserUI.MakeBoxAtPosition(boxes[0], 0, 0);
             UserUI.MakeBoxAtPosition(boxes[1], 16, 0);
             UserUI.MakeBoxAtPosition(boxes[5], 0, 10);
-            UserUI.MakeBoxAtPosition(boxes[3], 40, 0);
-            UserUI.MakeBoxAtPosition(boxes[2], 0, 15);
+            UserUI.MakeBoxAtPosition(boxes[3], 45, 0);
+            UserUI.MakeBoxAtPosition(boxes[2], 0, 21);
+        }
+        public static void GenerateShopScreen(List<UserUI> boxes)
+        {
+            UserUI.MakeBoxAtPosition(boxes[0], 0, 1);
+            UserUI.MakeBoxAtPosition(boxes[1], 16, 1);
+            UserUI.MakeBoxAtPosition(boxes[6], 0, 11);
         }
         public string MakeBox(int width, int height)
         {
@@ -146,7 +156,7 @@ namespace DungeonLibrary
                 else
                 {
                     Console.SetCursorPosition(startCol, startRow);
-                    Console.WriteLine(menus[r1]);
+                    Console.WriteLine(menus);
                 }
             }
 
@@ -155,30 +165,30 @@ namespace DungeonLibrary
         }
         public static void ClearBox(UserUI box, int startCol, int startRow)
         {
+            //Variables that allow to only get rid of a certain part
             string eraser = " ";
             for (int i = 0; i <= box.Height - 3; i++)
             {
-                Console.SetCursorPosition(startCol, startRow);
-                for (int j = 0; j <= box.Width - 2; j++)
-                {
-                    if (i == 0 && j != 0 && j != box.Width - 2)
+                    Console.SetCursorPosition(startCol, startRow);
+                    for (int j = 0; j <= box.Width - 2; j++)
                     {
-                        Console.Write(eraser);
-                    }
-                    else if (i == box.Height - 3 && j != 0 && j != box.Width - 2)
-                    {
-                        Console.Write(eraser);
-                    }
-                    else if (j == 0 || j == box.Width - 2)
-                    {
-                        Console.Write(eraser);
-                    }
-                    else
-                    {
-                        Console.Write(eraser);
-                    }
-
-                }
+                            if (i == 0 && j != 0 && j != box.Width - 2)
+                            {
+                                Console.Write(eraser);
+                            }
+                            else if (i == box.Height - 3 && j != 0 && j != box.Width - 2)
+                            {
+                                Console.Write(eraser);
+                            }
+                            else if (j == 0 || j == box.Width - 2)
+                            {
+                                Console.Write(eraser);
+                            }
+                            else
+                            {
+                                Console.Write(eraser);
+                            }
+                    }             
                 startRow++;
             }
         }

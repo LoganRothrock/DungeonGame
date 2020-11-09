@@ -30,6 +30,7 @@ namespace DungeonLibrary
         public bool IsTwoHanded { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public bool IsEquipped { get; set; }
         public Weapon(int minDamage, int maxDamage,string name,int bonusHitChance, bool isTwoHanded,string description )
         {
             MaxDamage = maxDamage;
@@ -41,7 +42,7 @@ namespace DungeonLibrary
         }
         public override string ToString()
         {
-            return string.Format("******** {0} ********\n{1}\n{2} - {3} dmg dealt", Name,Description,MinDamage,MaxDamage);
+            return string.Format("******** {0} ********\n|{1}\n|{2} - {3} dmg dealt", Name,Description,MinDamage,MaxDamage);
         }
 
 

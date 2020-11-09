@@ -15,6 +15,7 @@ namespace DungeonLibrary
         //properties
         public int MaxDamage { get; set; }
         public string Description { get; set; }
+        public int GoldDrop { get; set; }
         public int MinDamage
         {
             get { return _minDamage; }
@@ -35,7 +36,7 @@ namespace DungeonLibrary
 
         //MINI-LAB
         //Create the default and FQCTOR for monster. Remeber the assignment order inside matters in this case
-        public Monster(string name, int life, int maxLife, int hitChance, int block, int maxDamage, string description, int minDamage, int evasion, int agility)
+        public Monster(string name, int life, int maxLife, int hitChance, int block, int maxDamage, string description, int minDamage, int evasion, int agility, int goldDrop)
         {
             MaxDamage = maxDamage;
             MinDamage = minDamage;
@@ -48,6 +49,7 @@ namespace DungeonLibrary
             Evasion = evasion;
             Agility = agility;
             UsedTurn = false;
+            GoldDrop = goldDrop;
         }
         public Monster()
         {
@@ -58,8 +60,8 @@ namespace DungeonLibrary
         //Method
         public override string ToString()
         {
-            return string.Format("\n****** MONSTER ******\n{0}\nLife: {1} of {2}\nDamage: {3} to {4}" +
-                "\nBlock: {5}\nEvasion: {6}\nAgility: {7}\nDescription:\n{8}\n",
+            return string.Format("****** MONSTER ******\n|{0}\n|Life: {1} of {2}\n|Damage: {3} to {4}" +
+                "\n|Block: {5}\tEvasion: {6}\n|Agility: {7}",
                 Name,
                 Life,
                 MaxLife,
@@ -67,8 +69,7 @@ namespace DungeonLibrary
                 MaxDamage,
                 Block,
                 Evasion,
-                Agility,
-                Description);
+                Agility);
         }
         public int GetStats()
         {

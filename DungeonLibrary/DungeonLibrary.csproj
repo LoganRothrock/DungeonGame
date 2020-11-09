@@ -52,6 +52,7 @@
     <Compile Include="Monsters.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Race.cs" />
+    <Compile Include="Shop.cs" />
     <Compile Include="UserUI.cs" />
     <Compile Include="Status.cs" />
     <Compile Include="Weapon.cs" />

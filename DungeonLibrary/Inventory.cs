@@ -11,8 +11,6 @@ namespace DungeonLibrary
         public List<Item> Items { get; set; }
         public List<Equipment> Equipments { get; set; }
         public List<Weapon> Weapons { get; set; }
-        //List<Item> items
-        //List<Weapon> weapons
         public Inventory(List<Equipment> equipment,List<Weapon> weapons,List<Item> items)
         {
             Weapons = weapons;

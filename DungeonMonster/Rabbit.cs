@@ -17,7 +17,8 @@ namespace DungeonMonster
         public bool IsFluffy { get; set; }
 
         //ctors
-        public Rabbit(string name, int life, int maxLife, int hitChance, int block, int minDamage, int maxDamage,int agility, int evasion, string description, bool isFluffy) : base(name, life, maxLife, hitChance, block, maxDamage, description, minDamage,evasion,agility)
+        public Rabbit(string name, int life, int maxLife, int hitChance, int block, int minDamage, int maxDamage,int agility, int evasion,int goldDrop, string description, bool isFluffy) 
+            : base(name, life, maxLife, hitChance, block, maxDamage, description, minDamage,evasion,agility,goldDrop)
         {
             IsFluffy = isFluffy;
 
