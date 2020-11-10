@@ -40,6 +40,7 @@ namespace DungeonLibrary
         public List<Item> Items { get; set; }
         public List<Equipment> Equipments { get; set; }
         public List<Weapon> Weapons { get; set; }
+        public int Score { get; set; }
         public int Exp { get; set; }
         public int Lvl { get; set; }
 
@@ -62,6 +63,7 @@ namespace DungeonLibrary
             Gold = 0;
             Exp = 0;
             Lvl = 0;
+            Score = 0;
             UsedTurn = false;
             Weapons = new List<Weapon>();
             Items = new List<Item>();
@@ -165,7 +167,7 @@ namespace DungeonLibrary
         }
         public override int CalcHitChance()
         {
-            return base.CalcHitChance() + EquippedWeapon.BonusHitChance;
+            return base.CalcHitChance() + (int)EquippedWeapon.BonusHitChance;
         }
         public void DetermineLevelUp(int startRow)
         {

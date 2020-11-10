@@ -17,20 +17,20 @@ namespace DungeonLibrary
         {
             HasProduct = false;
         }
-        public void GenerateProductsToSell()
+        public void GenerateProductsToSell(Player player)
         {
             if (HasProduct)
             {
-                //WeaponsToSell.Clear();
+                WeaponsToSell.Clear();
                 EquipmentToSell.Clear();
                 ItemsToSell.Clear();
             }
             HasProduct = true;
-            Equipment e1 = new Equipment("Test Name", "Test Description");
-            Equipment e2 = new Equipment("Test Name", "Test Description");
-            Equipment e3 = new Equipment("Test Name", "Test Description");
-            Equipment e4 = new Equipment("Test Name", "Test Description");
-            Equipment e5 = new Equipment("Test Name", "Test Description");
+            Equipment e1 = new Equipment("Test Name", "Test Description", player);
+            Equipment e2 = new Equipment("Test Name", "Test Description", player);
+            Equipment e3 = new Equipment("Test Name", "Test Description", player);
+            Equipment e4 = new Equipment("Test Name", "Test Description", player);
+            Equipment e5 = new Equipment("Test Name", "Test Description", player);
             List<Equipment> equipment = new List<Equipment>
             {
                 e1,
@@ -55,6 +55,21 @@ namespace DungeonLibrary
                 i5
             };
             ItemsToSell = item;
+
+            Weapon w1 = new Weapon("ShortBow", "A Simple Sword", player);
+            Weapon w2 = new Weapon("Shortsword", "A Simple Sword", player);
+            Weapon w3 = new Weapon("aRock", "A Simple Sword", player);
+            Weapon w4 = new Weapon("ShortBow", "A Simple Sword", player);
+            Weapon w5 = new Weapon("Shortsword", "A Simple Sword", player);
+            List<Weapon> weapons = new List<Weapon>
+            {
+                w1,
+                w2,
+                w3,
+                w4,
+                w5
+            };
+            WeaponsToSell = weapons;
         }
         public static int RandomInt(int first, int last)
         {

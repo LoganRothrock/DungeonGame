@@ -8,7 +8,6 @@ namespace DungeonLibrary
 {
     public class Equipment
     {
-
         private int _value;
         public int Value { get { return _value; } set {
                 if (value < 0)
@@ -32,12 +31,12 @@ namespace DungeonLibrary
 
 
         Random rand = new Random();
-        public Equipment(string name, string description)
+        public Equipment(string name, string description, Player player)
         {
 
             Name = name;
             Description = description;
-            Modifiers();
+            Modifiers(player);
             DetermineRarity();
             DetermineValue();
             IsEquipped = false;
@@ -60,7 +59,7 @@ namespace DungeonLibrary
         {
             Value = (int)((BonusBlock + BonusDamage + BonusDefense + BonusEvasion) * 1.50);
         }
-        private void Modifiers()
+        private void Modifiers(Player player)
         {
             int modAmount = RandomInt(0, 101);
             bool dmg = true, def = true, ev = true, bl = true;
@@ -74,25 +73,25 @@ namespace DungeonLibrary
                         int mod = RandomInt(0, 4);
                         if (mod == 0 && dmg == true)
                         {
-                            BonusDamage += rand.Next(1,6);
+                            BonusDamage += rand.Next(1,(6 + player.Lvl));
                             dmg = false;
                             modified = true;
                         }
                         else if (mod == 1 && def == true)
                         {
-                            BonusDefense += rand.Next(1,6);
+                            BonusDefense += rand.Next(1, (6 + player.Lvl));
                             def = false;
                             modified = true;
                         }
                         else if (mod == 2 && ev == true)
                         {
-                            BonusEvasion += rand.Next(1,6);
+                            BonusEvasion += rand.Next(1, (6 + player.Lvl));
                             ev = false;
                             modified = true;
                         }
                         else if (mod == 3 && bl == true)
                         {
-                            BonusBlock += rand.Next(1,6);
+                            BonusBlock += rand.Next(1, (6 + player.Lvl));
                             bl = false;
                             modified = true;
                         }
@@ -195,9 +194,6 @@ namespace DungeonLibrary
             else if (equipment.Type == "Helmet")
             {
                 player.EquippedHelmet = null;
-            }
-            {
-
             }
         }
     }

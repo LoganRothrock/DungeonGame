@@ -105,9 +105,11 @@ namespace DungeonLibrary
                                 player.Exp += monster.GetStats();
                                 Console.SetCursorPosition(1, 11);
                                 Console.Write(player.Name + " gained " + monster.GetStats() + " exp");
+                                player.Score++;
                                 player.Gold += monster.GoldDrop;
                                 player.DetermineLevelUp(12);
                                 Console.ReadKey();
+                                ctinue = false;
                             }
                         }
                         else if (menuPosition == 1) //Player Inventory
@@ -131,9 +133,11 @@ namespace DungeonLibrary
                                     player.Exp += monster.GetStats();
                                     Console.SetCursorPosition(1, 11);
                                     Console.Write(player.Name + " gained " + monster.GetStats() + " exp");
+                                    player.Score++;
                                     player.DetermineLevelUp(12);
                                     player.Gold += monster.GoldDrop;
                                     Console.ReadKey();
+                                    ctinue = false;
                                 }
                             }
                         }
@@ -1243,7 +1247,7 @@ namespace DungeonLibrary
         //Handles the shop menus
         public static void Shop(Player player, string[] actions, string[] invActions, UserUI boxes, int score,Shop shop)
         {
-            shop.GenerateProductsToSell();
+            shop.GenerateProductsToSell(player);
             bool leaveShop = false;
             int menuPosition = 0, startRow = 1;
             int count = 0;
@@ -1365,47 +1369,60 @@ namespace DungeonLibrary
                                             startRow = 0;
                                             count = 0;
                                             bool inCtinue = true;
-                                            int menuLength = player.Weapons.Count() - 1;
                                             do
                                             {
-                                                startRow = 1;
+                                                startRow = 2;
                                                 count = 0;
-                                                UserUI.ClearBox(boxes.Boxes[1], 17, 1);
+                                                UserUI.ClearBox(boxes.Boxes[1], 17, 2);
                                                 UserUI.ClearBox(boxes.Boxes[5], 1, 11);
-                                                foreach (Weapon weapon in player.Weapons)
+                                                foreach (Weapon weapon in shop.WeaponsToSell)
                                                 {
                                                     Console.SetCursorPosition(17, startRow);
-                                                    if (menuPosition == 0 && count == 0 && menuPosition <= menuLength)
+                                                    if (menuPosition == 0 && count == 0)
                                                     {
                                                         Console.ForegroundColor = ConsoleColor.Green;
                                                         Console.WriteLine(weapon.Name);
                                                         Console.ResetColor();
                                                         Console.SetCursorPosition(1, 11);
                                                         Console.WriteLine(weapon);
+                                                        UserUI.TextFormatter(boxes.Boxes[5], weapon.Description, 17, 1, false);
                                                     }
-                                                    else if (menuPosition == 1 && count == 1 && menuPosition <= menuLength)
+                                                    else if (menuPosition == 1 && count == 1)
                                                     {
                                                         Console.ForegroundColor = ConsoleColor.Green;
                                                         Console.WriteLine(weapon.Name);
                                                         Console.ResetColor();
                                                         Console.SetCursorPosition(1, 11);
                                                         Console.WriteLine(weapon);
+                                                        UserUI.TextFormatter(boxes.Boxes[5], weapon.Description, 17, 1, false);
                                                     }
-                                                    else if (menuPosition == 2 && count == 2 && menuPosition <= menuLength)
+                                                    else if (menuPosition == 2 && count == 2)
                                                     {
                                                         Console.ForegroundColor = ConsoleColor.Green;
                                                         Console.WriteLine(weapon.Name);
                                                         Console.ResetColor();
                                                         Console.SetCursorPosition(1, 11);
                                                         Console.WriteLine(weapon);
+                                                        UserUI.TextFormatter(boxes.Boxes[5], weapon.Description, 17, 1, false);
+
                                                     }
-                                                    else if (menuPosition == 3 && count == 3 && menuPosition <= menuLength)
+                                                    else if (menuPosition == 3 && count == 3)
                                                     {
                                                         Console.ForegroundColor = ConsoleColor.Green;
                                                         Console.WriteLine(weapon.Name);
                                                         Console.ResetColor();
                                                         Console.SetCursorPosition(1, 11);
                                                         Console.WriteLine(weapon);
+                                                        UserUI.TextFormatter(boxes.Boxes[5], weapon.Description, 17, 1, false);
+                                                    }
+                                                    else if (menuPosition == 4 && count == 4)
+                                                    {
+                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                        Console.WriteLine(weapon.Name);
+                                                        Console.ResetColor();
+                                                        Console.SetCursorPosition(1, 11);
+                                                        Console.WriteLine(weapon);
+                                                        UserUI.TextFormatter(boxes.Boxes[5], weapon.Description, 17, 1, false);
                                                     }
                                                     else
                                                     {
@@ -1414,11 +1431,12 @@ namespace DungeonLibrary
                                                     count++;
                                                     startRow++;
                                                 }
+
                                                 userInput = Console.ReadKey(true).Key;
                                                 switch (userInput)
                                                 {
                                                     case (ConsoleKey.DownArrow):
-                                                        if (menuPosition < menuLength)
+                                                        if (menuPosition < 4)
                                                         {
                                                             menuPosition++;
                                                         }
@@ -1429,13 +1447,13 @@ namespace DungeonLibrary
                                                             menuPosition--;
                                                         }
                                                         break;
-                                                    case ConsoleKey.Enter: //Prompts if the user wants to buy weapon
-                                                        if (menuPosition == 0)
+                                                    case ConsoleKey.Enter:
+                                                        if (menuPosition == 0) //Prompts the user if they want to buy Weapon
                                                         {
                                                             bool exit = false;
                                                             UserUI.ClearBox(boxes.Boxes[5], 1, 11);
                                                             Console.SetCursorPosition(1, 11);
-                                                            UserUI.TextFormatter(boxes.Boxes[5], $"Would you like to equip {player.Weapons[0].Name}?", 11, 1, false);
+                                                            Console.WriteLine($"Would you like to buy {shop.WeaponsToSell[0].Name}?");
                                                             menuPosition = 0;
                                                             do
                                                             {
@@ -1466,10 +1484,22 @@ namespace DungeonLibrary
                                                                         menuPosition = 0;
                                                                         break;
                                                                     case ConsoleKey.Enter:
-                                                                        if (menuPosition == 0)
+                                                                        if (menuPosition == 0 && player.Weapons.Count() < 4 && player.Gold > shop.WeaponsToSell[0].Value)
                                                                         {
+                                                                            player.Gold -= shop.WeaponsToSell[0].Value;
+                                                                            player.AddWeapon(shop.WeaponsToSell[0]);
                                                                             exit = true;
                                                                             ctinue = false;
+                                                                            inCtinue = false;
+                                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                        }
+                                                                        else if (player.Gold < shop.WeaponsToSell[0].Value)
+                                                                        {
+                                                                            UserUI.TextFormatter(boxes.Boxes[5], "You do not have enough gold! Sell me something!", 16, 1, false);
+                                                                        }
+                                                                        else if (menuPosition == 0 && player.Weapons.Count() >= 4)
+                                                                        {
+                                                                            UserUI.TextFormatter(boxes.Boxes[5], "You do not have enough room in your bag! Sell me something!", 16, 1, false);
                                                                         }
                                                                         else
                                                                         {
@@ -1478,19 +1508,305 @@ namespace DungeonLibrary
                                                                             exit = true;
                                                                         }
                                                                         break;
+                                                                    case ConsoleKey.Escape:
+                                                                        exit = true;
+                                                                        ctinue = false;
+                                                                        inCtinue = false;
+                                                                        UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                        break;
+                                                                }
+                                                            } while (!exit);
+                                                        }
+                                                        if (menuPosition == 1) //Prompts the user if they want to buy item
+                                                        {
+                                                            bool exit = false;
+                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                            Console.SetCursorPosition(1, 11);
+                                                            Console.WriteLine($"Would you like to buy {shop.WeaponsToSell[1].Name}?");
+                                                            menuPosition = 0;
+                                                            do
+                                                            {
+                                                                Console.SetCursorPosition(1, 13);
+                                                                if (menuPosition == 0)
+                                                                {
+                                                                    Console.ForegroundColor = ConsoleColor.Green;
+                                                                    Console.Write("YES");
+                                                                    Console.ResetColor();
+                                                                    Console.Write("                     ");
+                                                                    Console.Write("NO");
+                                                                }
+                                                                else if (menuPosition == 1)
+                                                                {
+                                                                    Console.Write("YES");
+                                                                    Console.Write("                     ");
+                                                                    Console.ForegroundColor = ConsoleColor.Green;
+                                                                    Console.Write("NO");
+                                                                    Console.ResetColor();
+                                                                }
+                                                                userInput = Console.ReadKey(true).Key;
+                                                                switch (userInput)
+                                                                {
+                                                                    case ConsoleKey.RightArrow:
+                                                                        menuPosition = 1;
+                                                                        break;
+                                                                    case ConsoleKey.LeftArrow:
+                                                                        menuPosition = 0;
+                                                                        break;
+                                                                    case ConsoleKey.Enter:
+                                                                        if (menuPosition == 0 && player.Weapons.Count() < 4 && player.Gold > shop.WeaponsToSell[1].Value)
+                                                                        {
+                                                                            player.Gold -= shop.WeaponsToSell[1].Value;
+                                                                            player.AddWeapon(shop.WeaponsToSell[1]);
+                                                                            exit = true;
+                                                                            ctinue = false;
+                                                                            inCtinue = false;
+                                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                        }
+                                                                        else if (player.Gold < shop.WeaponsToSell[1].Value)
+                                                                        {
+                                                                            UserUI.TextFormatter(boxes.Boxes[5], "You do not have enough gold! Sell me something!", 16, 1, false);
+                                                                        }
+                                                                        else if (menuPosition == 0 && player.Weapons.Count() >= 4)
+                                                                        {
+                                                                            UserUI.TextFormatter(boxes.Boxes[5], "You do not have enough room in your bag! Sell me something!", 16, 1, false);
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                            menuPosition = 0;
+                                                                            exit = true;
+                                                                        }
+                                                                        break;
+                                                                    case ConsoleKey.Escape:
+                                                                        exit = true;
+                                                                        ctinue = false;
+                                                                        inCtinue = false;
+                                                                        UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                        break;
+                                                                }
+                                                            } while (!exit);
+                                                        }
+                                                        if (menuPosition == 2) //Prompts the user if they want to buy item
+                                                        {
+                                                            bool exit = false;
+                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                            Console.SetCursorPosition(1, 11);
+                                                            Console.WriteLine($"Would you like to buy {shop.WeaponsToSell[2].Name}?");
+                                                            menuPosition = 0;
+                                                            do
+                                                            {
+                                                                Console.SetCursorPosition(1, 13);
+                                                                if (menuPosition == 0)
+                                                                {
+                                                                    Console.ForegroundColor = ConsoleColor.Green;
+                                                                    Console.Write("YES");
+                                                                    Console.ResetColor();
+                                                                    Console.Write("                     ");
+                                                                    Console.Write("NO");
+                                                                }
+                                                                else if (menuPosition == 1)
+                                                                {
+                                                                    Console.Write("YES");
+                                                                    Console.Write("                     ");
+                                                                    Console.ForegroundColor = ConsoleColor.Green;
+                                                                    Console.Write("NO");
+                                                                    Console.ResetColor();
+                                                                }
+                                                                userInput = Console.ReadKey(true).Key;
+                                                                switch (userInput)
+                                                                {
+                                                                    case ConsoleKey.RightArrow:
+                                                                        menuPosition = 1;
+                                                                        break;
+                                                                    case ConsoleKey.LeftArrow:
+                                                                        menuPosition = 0;
+                                                                        break;
+                                                                    case ConsoleKey.Enter:
+                                                                        if (menuPosition == 0 && player.Weapons.Count() < 4 && player.Gold > shop.WeaponsToSell[2].Value)
+                                                                        {
+                                                                            player.Gold -= shop.WeaponsToSell[2].Value;
+                                                                            player.AddWeapon(shop.WeaponsToSell[2]);
+                                                                            exit = true;
+                                                                            ctinue = false;
+                                                                            inCtinue = false;
+                                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                        }
+                                                                        else if (player.Gold < shop.WeaponsToSell[2].Value)
+                                                                        {
+                                                                            UserUI.TextFormatter(boxes.Boxes[5], "You do not have enough gold! Sell me something!", 16, 1, false);
+                                                                        }
+                                                                        else if (menuPosition == 0 && player.Weapons.Count() >= 4)
+                                                                        {
+                                                                            UserUI.TextFormatter(boxes.Boxes[5], "You do not have enough room in your bag! Sell me something!", 16, 1, false);
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                            menuPosition = 0;
+                                                                            exit = true;
+                                                                        }
+                                                                        break;
+                                                                    case ConsoleKey.Escape:
+                                                                        exit = true;
+                                                                        ctinue = false;
+                                                                        inCtinue = false;
+                                                                        UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                        break;
+                                                                }
+                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                            } while (!exit);
+                                                        }
+                                                        if (menuPosition == 3) //Prompts the user if they want to buy item
+                                                        {
+                                                            bool exit = false;
+                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                            Console.SetCursorPosition(1, 11);
+                                                            Console.WriteLine($"Would you like to buy {shop.WeaponsToSell[3].Name}?");
+                                                            menuPosition = 0;
+                                                            do
+                                                            {
+                                                                Console.SetCursorPosition(1, 13);
+                                                                if (menuPosition == 0)
+                                                                {
+                                                                    Console.ForegroundColor = ConsoleColor.Green;
+                                                                    Console.Write("YES");
+                                                                    Console.ResetColor();
+                                                                    Console.Write("                     ");
+                                                                    Console.Write("NO");
+                                                                }
+                                                                else if (menuPosition == 1)
+                                                                {
+                                                                    Console.Write("YES");
+                                                                    Console.Write("                     ");
+                                                                    Console.ForegroundColor = ConsoleColor.Green;
+                                                                    Console.Write("NO");
+                                                                    Console.ResetColor();
+                                                                }
+                                                                userInput = Console.ReadKey(true).Key;
+                                                                switch (userInput)
+                                                                {
+                                                                    case ConsoleKey.RightArrow:
+                                                                        menuPosition = 1;
+                                                                        break;
+                                                                    case ConsoleKey.LeftArrow:
+                                                                        menuPosition = 0;
+                                                                        break;
+                                                                    case ConsoleKey.Enter:
+                                                                        if (menuPosition == 0 && player.Weapons.Count() < 4 && player.Gold > shop.WeaponsToSell[3].Value)
+                                                                        {
+                                                                            player.Gold -= shop.WeaponsToSell[3].Value;
+                                                                            player.AddWeapon(shop.WeaponsToSell[3]);
+                                                                            exit = true;
+                                                                            ctinue = false;
+                                                                            inCtinue = false;
+                                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                        }
+                                                                        else if (player.Gold < shop.WeaponsToSell[3].Value)
+                                                                        {
+                                                                            UserUI.TextFormatter(boxes.Boxes[5], "You do not have enough gold! Sell me something!", 16, 1, false);
+                                                                        }
+                                                                        else if (menuPosition == 0 && player.Weapons.Count() >= 4)
+                                                                        {
+                                                                            UserUI.TextFormatter(boxes.Boxes[5], "You do not have enough room in your bag! Sell me something!", 16, 1, false);
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                            menuPosition = 0;
+                                                                            exit = true;
+                                                                        }
+                                                                        break;
+                                                                    case ConsoleKey.Escape:
+                                                                        exit = true;
+                                                                        ctinue = false;
+                                                                        inCtinue = false;
+                                                                        UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                        break;
+                                                                }
+                                                            } while (!exit);
+                                                        }
+                                                        if (menuPosition == 3) //Prompts the user if they want to buy item
+                                                        {
+                                                            bool exit = false;
+                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                            Console.SetCursorPosition(1, 11);
+                                                            Console.WriteLine($"Would you like to buy {shop.WeaponsToSell[4].Name}?");
+                                                            menuPosition = 0;
+                                                            do
+                                                            {
+                                                                Console.SetCursorPosition(1, 13);
+                                                                if (menuPosition == 0)
+                                                                {
+                                                                    Console.ForegroundColor = ConsoleColor.Green;
+                                                                    Console.Write("YES");
+                                                                    Console.ResetColor();
+                                                                    Console.Write("                     ");
+                                                                    Console.Write("NO");
+                                                                }
+                                                                else if (menuPosition == 1)
+                                                                {
+                                                                    Console.Write("YES");
+                                                                    Console.Write("                     ");
+                                                                    Console.ForegroundColor = ConsoleColor.Green;
+                                                                    Console.Write("NO");
+                                                                    Console.ResetColor();
+                                                                }
+                                                                userInput = Console.ReadKey(true).Key;
+                                                                switch (userInput)
+                                                                {
+                                                                    case ConsoleKey.RightArrow:
+                                                                        menuPosition = 1;
+                                                                        break;
+                                                                    case ConsoleKey.LeftArrow:
+                                                                        menuPosition = 0;
+                                                                        break;
+                                                                    case ConsoleKey.Enter:
+                                                                        if (menuPosition == 0 && player.Weapons.Count() < 4 && player.Gold > shop.WeaponsToSell[4].Value)
+                                                                        {
+                                                                            player.Gold -= shop.WeaponsToSell[4].Value;
+                                                                            player.AddWeapon(shop.WeaponsToSell[4]);
+                                                                            exit = true;
+                                                                            ctinue = false;
+                                                                            inCtinue = false;
+                                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                        }
+                                                                        else if (player.Gold < shop.WeaponsToSell[4].Value)
+                                                                        {
+                                                                            UserUI.TextFormatter(boxes.Boxes[5], "You do not have enough gold! Sell me something!", 16, 1, false);
+                                                                        }
+                                                                        else if (menuPosition == 0 && player.Weapons.Count() >= 4)
+                                                                        {
+                                                                            UserUI.TextFormatter(boxes.Boxes[5], "You do not have enough room in your bag! Sell me something!", 16, 1, false);
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                            menuPosition = 0;
+                                                                            exit = true;
+                                                                        }
+                                                                        break;
+                                                                    case ConsoleKey.Escape:
+                                                                        exit = true;
+                                                                        ctinue = false;
+                                                                        inCtinue = false;
+                                                                        UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                        break;
                                                                 }
                                                             } while (!exit);
                                                         }
                                                         break;
                                                     case ConsoleKey.Escape:
                                                         inCtinue = false;
-                                                        UserUI.ClearBox(boxes.Boxes[1], 17, 1);
                                                         menuPosition = 0;
+                                                        UserUI.ClearBox(boxes.Boxes[1], 17, 1);
+
                                                         break;
                                                 }
 
-
                                             } while (inCtinue);
+                                            UserUI.ClearBox(boxes.Boxes[1], 17, 2);
+
+
                                         }
                                         else if (menuPosition == 1) //Equipment
                                         {
@@ -1620,6 +1936,7 @@ namespace DungeonLibrary
                                                                             exit = true;
                                                                             ctinue = false;
                                                                             inCtinue = false;
+                                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
                                                                         }
                                                                         else if(player.Gold < shop.EquipmentToSell[0].Value)
                                                                         {
@@ -1635,6 +1952,12 @@ namespace DungeonLibrary
                                                                             menuPosition = 0;
                                                                             exit = true;
                                                                         }
+                                                                        break;
+                                                                    case ConsoleKey.Escape:
+                                                                        exit = true;
+                                                                        ctinue = false;
+                                                                        inCtinue = false;
+                                                                        UserUI.ClearBox(boxes.Boxes[5], 1, 11);
                                                                         break;
                                                                 }
                                                             } while (!exit);
@@ -1682,6 +2005,7 @@ namespace DungeonLibrary
                                                                             exit = true;
                                                                             ctinue = false;
                                                                             inCtinue = false;
+                                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
                                                                         }
                                                                         else if (player.Gold < shop.EquipmentToSell[1].Value)
                                                                         {
@@ -1697,6 +2021,12 @@ namespace DungeonLibrary
                                                                             menuPosition = 0;
                                                                             exit = true;
                                                                         }
+                                                                        break;
+                                                                    case ConsoleKey.Escape:
+                                                                        exit = true;
+                                                                        ctinue = false;
+                                                                        inCtinue = false;
+                                                                        UserUI.ClearBox(boxes.Boxes[5], 1, 11);
                                                                         break;
                                                                 }
                                                             } while (!exit);
@@ -1744,6 +2074,7 @@ namespace DungeonLibrary
                                                                             exit = true;
                                                                             ctinue = false;
                                                                             inCtinue = false;
+                                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
                                                                         }
                                                                         else if (player.Gold < shop.EquipmentToSell[2].Value)
                                                                         {
@@ -1759,6 +2090,12 @@ namespace DungeonLibrary
                                                                             menuPosition = 0;
                                                                             exit = true;
                                                                         }
+                                                                        break;
+                                                                    case ConsoleKey.Escape:
+                                                                        exit = true;
+                                                                        ctinue = false;
+                                                                        inCtinue = false;
+                                                                        UserUI.ClearBox(boxes.Boxes[5], 1, 11);
                                                                         break;
                                                                 }
                                                                 UserUI.ClearBox(boxes.Boxes[5], 1, 11);
@@ -1807,6 +2144,7 @@ namespace DungeonLibrary
                                                                             exit = true;
                                                                             ctinue = false;
                                                                             inCtinue = false;
+                                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
                                                                         }
                                                                         else if (player.Gold < shop.EquipmentToSell[3].Value)
                                                                         {
@@ -1822,6 +2160,12 @@ namespace DungeonLibrary
                                                                             menuPosition = 0;
                                                                             exit = true;
                                                                         }
+                                                                        break;
+                                                                    case ConsoleKey.Escape:
+                                                                        exit = true;
+                                                                        ctinue = false;
+                                                                        inCtinue = false;
+                                                                        UserUI.ClearBox(boxes.Boxes[5], 1, 11);
                                                                         break;
                                                                 }
                                                             } while (!exit);
@@ -1869,6 +2213,7 @@ namespace DungeonLibrary
                                                                             exit = true;
                                                                             ctinue = false;
                                                                             inCtinue = false;
+                                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
                                                                         }
                                                                         else if (player.Gold < shop.EquipmentToSell[4].Value)
                                                                         {
@@ -1884,6 +2229,12 @@ namespace DungeonLibrary
                                                                             menuPosition = 0;
                                                                             exit = true;
                                                                         }
+                                                                        break;
+                                                                    case ConsoleKey.Escape:
+                                                                        exit = true;
+                                                                        ctinue = false;
+                                                                        inCtinue = false;
+                                                                        UserUI.ClearBox(boxes.Boxes[5], 1, 11);
                                                                         break;
                                                                 }
                                                             } while (!exit);
@@ -2021,7 +2372,8 @@ namespace DungeonLibrary
                                                                                     ctinue = false;
                                                                                     inCtinue = false;
                                                                                     shop.ItemsToSell[0].Count -= 1;
-                                                                                }
+                                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                            }
                                                                                 else if (player.Gold < shop.ItemsToSell[0].Value)
                                                                                 {
                                                                                     UserUI.TextFormatter(boxes.Boxes[5], "You do not have enough gold! Sell me something!", 16, 1, false);
@@ -2033,7 +2385,13 @@ namespace DungeonLibrary
                                                                                     exit = true;
                                                                                 }
                                                                                 break;
-                                                                        }
+                                                                        case ConsoleKey.Escape:
+                                                                            exit = true;
+                                                                            ctinue = false;
+                                                                            inCtinue = false;
+                                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                            break;
+                                                                    }
                                                                     } while (!exit);
                                                                 
                                                             }
@@ -2083,6 +2441,7 @@ namespace DungeonLibrary
                                                                                 ctinue = false;
                                                                                 inCtinue = false;
                                                                                 shop.ItemsToSell[1].Count -= 1;
+                                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
                                                                             }
                                                                             else if (player.Gold < shop.ItemsToSell[1].Value)
                                                                             {
@@ -2094,6 +2453,12 @@ namespace DungeonLibrary
                                                                                 menuPosition = 0;
                                                                                 exit = true;
                                                                             }
+                                                                            break;
+                                                                        case ConsoleKey.Escape:
+                                                                            exit = true;
+                                                                            ctinue = false;
+                                                                            inCtinue = false;
+                                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
                                                                             break;
                                                                     }
                                                                 } while (!exit);
@@ -2144,6 +2509,7 @@ namespace DungeonLibrary
                                                                                 ctinue = false;
                                                                                 inCtinue = false;
                                                                                 shop.ItemsToSell[2].Count -= 1;
+                                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
                                                                             }
                                                                             else if (player.Gold < shop.ItemsToSell[2].Value)
                                                                             {
@@ -2155,6 +2521,12 @@ namespace DungeonLibrary
                                                                                 menuPosition = 0;
                                                                                 exit = true;
                                                                             }
+                                                                            break;
+                                                                        case ConsoleKey.Escape:
+                                                                            exit = true;
+                                                                            ctinue = false;
+                                                                            inCtinue = false;
+                                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
                                                                             break;
                                                                     }
                                                                 } while (!exit);
@@ -2205,6 +2577,7 @@ namespace DungeonLibrary
                                                                                 ctinue = false;
                                                                                 inCtinue = false;
                                                                                 shop.ItemsToSell[3].Count -= 1;
+                                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
                                                                             }
                                                                             else if (player.Gold < shop.ItemsToSell[3].Value)
                                                                             {
@@ -2216,6 +2589,12 @@ namespace DungeonLibrary
                                                                                 menuPosition = 0;
                                                                                 exit = true;
                                                                             }
+                                                                            break;
+                                                                        case ConsoleKey.Escape:
+                                                                            exit = true;
+                                                                            ctinue = false;
+                                                                            inCtinue = false;
+                                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
                                                                             break;
                                                                     }
                                                                 } while (!exit);
@@ -2266,6 +2645,7 @@ namespace DungeonLibrary
                                                                                 ctinue = false;
                                                                                 inCtinue = false;
                                                                                 shop.ItemsToSell[4].Count -= 1;
+                                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
                                                                             }
                                                                             else if (player.Gold < shop.ItemsToSell[4].Value)
                                                                             {
@@ -2277,6 +2657,12 @@ namespace DungeonLibrary
                                                                                 menuPosition = 0;
                                                                                 exit = true;
                                                                             }
+                                                                            break;
+                                                                        case ConsoleKey.Escape:
+                                                                            exit = true;
+                                                                            ctinue = false;
+                                                                            inCtinue = false;
+                                                                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
                                                                             break;
                                                                     }
                                                                 } while (!exit);
@@ -2313,7 +2699,785 @@ namespace DungeonLibrary
                         }
                         else if (menuPosition == 1) //Browse player inv to sell
                         {
-                            UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                            do
+                            {
+                                startRow = 1;
+                                count = 0;
+                                do
+                                {
+                                    startRow = 1;
+                                    count = 0;
+                                    UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                    foreach (string action in invActions)
+                                    {
+                                        Console.SetCursorPosition(17, startRow);
+                                        if (menuPosition == 0 && count == 0)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Green;
+                                            Console.WriteLine(action);
+                                            Console.ResetColor();
+                                        }
+                                        else if (menuPosition == 1 && count == 1)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Green;
+                                            Console.WriteLine(action);
+                                            Console.ResetColor();
+                                        }
+                                        else if (menuPosition == 2 && count == 2)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Green;
+                                            Console.WriteLine(action);
+                                            Console.ResetColor();
+                                        }
+                                        else if (menuPosition == 3 && count == 3)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Green;
+                                            Console.WriteLine(action);
+                                            Console.ResetColor();
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine(action);
+                                        }
+                                        count++;
+                                        startRow++;
+                                    }
+                                    userInput = Console.ReadKey(true).Key;
+                                    switch (userInput)
+                                    {
+                                        case (ConsoleKey.DownArrow):
+                                            if (menuPosition < 3)
+                                            {
+                                                menuPosition++;
+                                            }
+                                            break;
+                                        case ConsoleKey.UpArrow:
+                                            if (menuPosition > 0)
+                                            {
+                                                menuPosition--;
+                                            }
+                                            break;
+                                        case ConsoleKey.Enter:
+                                            if (menuPosition == 0) //Weapons
+                                            {
+                                                menuPosition = 0;
+                                                startRow = 0;
+                                                count = 0;
+                                                bool inCtinue = true;
+                                                int menuLength = player.Weapons.Count() - 1;
+                                                do
+                                                {
+                                                    startRow = 1;
+                                                    count = 0;
+                                                    UserUI.ClearBox(boxes.Boxes[1], 17, 1);
+                                                    UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                    foreach (Weapon weapon in player.Weapons)
+                                                    {
+                                                        Console.SetCursorPosition(17, startRow);
+                                                        if (menuPosition == 0 && count == 0 && menuPosition <= menuLength)
+                                                        {
+                                                            Console.ForegroundColor = ConsoleColor.Green;
+                                                            Console.WriteLine(weapon.Name);
+                                                            Console.ResetColor();
+                                                            Console.SetCursorPosition(1, 11);
+                                                            Console.WriteLine(weapon);
+                                                        }
+                                                        else if (menuPosition == 1 && count == 1 && menuPosition <= menuLength)
+                                                        {
+                                                            Console.ForegroundColor = ConsoleColor.Green;
+                                                            Console.WriteLine(weapon.Name);
+                                                            Console.ResetColor();
+                                                            Console.SetCursorPosition(1, 11);
+                                                            Console.WriteLine(weapon);
+                                                        }
+                                                        else if (menuPosition == 2 && count == 2 && menuPosition <= menuLength)
+                                                        {
+                                                            Console.ForegroundColor = ConsoleColor.Green;
+                                                            Console.WriteLine(weapon.Name);
+                                                            Console.ResetColor();
+                                                            Console.SetCursorPosition(1, 11);
+                                                            Console.WriteLine(weapon);
+                                                        }
+                                                        else if (menuPosition == 3 && count == 3 && menuPosition <= menuLength)
+                                                        {
+                                                            Console.ForegroundColor = ConsoleColor.Green;
+                                                            Console.WriteLine(weapon.Name);
+                                                            Console.ResetColor();
+                                                            Console.SetCursorPosition(1, 11);
+                                                            Console.WriteLine(weapon);
+                                                        }
+                                                        else
+                                                        {
+                                                            Console.WriteLine(weapon.Name);
+                                                        }
+                                                        count++;
+                                                        startRow++;
+                                                    }
+                                                    userInput = Console.ReadKey(true).Key;
+                                                    switch (userInput)
+                                                    {
+                                                        case (ConsoleKey.DownArrow):
+                                                            if (menuPosition < menuLength)
+                                                            {
+                                                                menuPosition++;
+                                                            }
+                                                            break;
+                                                        case ConsoleKey.UpArrow:
+                                                            if (menuPosition > 0)
+                                                            {
+                                                                menuPosition--;
+                                                            }
+                                                            break;
+                                                        case ConsoleKey.Enter:
+                                                            if (menuPosition == 0)
+                                                            {
+                                                                bool exit = false;
+                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                Console.SetCursorPosition(1, 11);
+                                                                UserUI.TextFormatter(boxes.Boxes[5], $"Would you like to sell {player.Weapons[0].Name}?", 11, 1, false);
+                                                                menuPosition = 0;
+                                                                do
+                                                                {
+                                                                    Console.SetCursorPosition(1, 13);
+                                                                    if (menuPosition == 0)
+                                                                    {
+                                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                                        Console.Write("YES");
+                                                                        Console.ResetColor();
+                                                                        Console.Write("                     ");
+                                                                        Console.Write("NO");
+                                                                    }
+                                                                    else if (menuPosition == 1)
+                                                                    {
+                                                                        Console.Write("YES");
+                                                                        Console.Write("                     ");
+                                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                                        Console.Write("NO");
+                                                                        Console.ResetColor();
+                                                                    }
+                                                                    userInput = Console.ReadKey(true).Key;
+                                                                    switch (userInput)
+                                                                    {
+                                                                        case ConsoleKey.RightArrow:
+                                                                            menuPosition = 1;
+                                                                            break;
+                                                                        case ConsoleKey.LeftArrow:
+                                                                            menuPosition = 0;
+                                                                            break;
+                                                                        case ConsoleKey.Enter:
+                                                                            if (menuPosition == 0)
+                                                                            {
+                                                                                player.Gold += player.Weapons[0].Value;
+                                                                                player.Weapons.Remove(player.Weapons[0]);
+                                                                                exit = true;
+                                                                                ctinue = false;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                                menuPosition = 0;
+                                                                                exit = true;
+                                                                            }
+                                                                            break;
+                                                                    }
+                                                                } while (!exit);
+                                                            }
+                                                            else if (menuPosition == 1)
+                                                            {
+                                                                bool exit = false;
+                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                Console.SetCursorPosition(1, 11);
+                                                                UserUI.TextFormatter(boxes.Boxes[5], $"Would you like to sell {player.Weapons[1].Name}?", 11, 1, false);
+                                                                menuPosition = 0;
+                                                                do
+                                                                {
+                                                                    Console.SetCursorPosition(1, 13);
+                                                                    if (menuPosition == 0)
+                                                                    {
+                                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                                        Console.Write("YES");
+                                                                        Console.ResetColor();
+                                                                        Console.Write("                     ");
+                                                                        Console.Write("NO");
+                                                                    }
+                                                                    else if (menuPosition == 1)
+                                                                    {
+                                                                        Console.Write("YES");
+                                                                        Console.Write("                     ");
+                                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                                        Console.Write("NO");
+                                                                        Console.ResetColor();
+                                                                    }
+                                                                    userInput = Console.ReadKey(true).Key;
+                                                                    switch (userInput)
+                                                                    {
+                                                                        case ConsoleKey.RightArrow:
+                                                                            menuPosition = 1;
+                                                                            break;
+                                                                        case ConsoleKey.LeftArrow:
+                                                                            menuPosition = 0;
+                                                                            break;
+                                                                        case ConsoleKey.Enter:
+                                                                            if (menuPosition == 0)
+                                                                            {
+                                                                                player.Gold += player.Weapons[1].Value;
+                                                                                player.Weapons.Remove(player.Weapons[1]);
+                                                                                exit = true;
+                                                                                ctinue = false;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                                menuPosition = 0;
+                                                                                exit = true;
+                                                                            }
+                                                                            break;
+                                                                    }
+                                                                } while (!exit);
+                                                            }
+                                                            else if (menuPosition == 2)
+                                                            {
+                                                                bool exit = false;
+                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                Console.SetCursorPosition(1, 11);
+                                                                UserUI.TextFormatter(boxes.Boxes[5], $"Would you like to sell {player.Weapons[2].Name}?", 11, 1, false);
+                                                                menuPosition = 0;
+                                                                do
+                                                                {
+                                                                    Console.SetCursorPosition(1, 13);
+                                                                    if (menuPosition == 0)
+                                                                    {
+                                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                                        Console.Write("YES");
+                                                                        Console.ResetColor();
+                                                                        Console.Write("                     ");
+                                                                        Console.Write("NO");
+                                                                    }
+                                                                    else if (menuPosition == 1)
+                                                                    {
+                                                                        Console.Write("YES");
+                                                                        Console.Write("                     ");
+                                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                                        Console.Write("NO");
+                                                                        Console.ResetColor();
+                                                                    }
+                                                                    userInput = Console.ReadKey(true).Key;
+                                                                    switch (userInput)
+                                                                    {
+                                                                        case ConsoleKey.RightArrow:
+                                                                            menuPosition = 1;
+                                                                            break;
+                                                                        case ConsoleKey.LeftArrow:
+                                                                            menuPosition = 0;
+                                                                            break;
+                                                                        case ConsoleKey.Enter:
+                                                                            if (menuPosition == 0)
+                                                                            {
+                                                                                player.Gold += player.Weapons[2].Value;
+                                                                                player.Weapons.Remove(player.Weapons[2]);
+                                                                                exit = true;
+                                                                                ctinue = false;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                                menuPosition = 0;
+                                                                                exit = true;
+                                                                            }
+                                                                            break;
+                                                                    }
+                                                                } while (!exit);
+                                                            }
+                                                            else if (menuPosition == 3)
+                                                            {
+                                                                bool exit = false;
+                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                Console.SetCursorPosition(1, 11);
+                                                                UserUI.TextFormatter(boxes.Boxes[5], $"Would you like to sell {player.Weapons[3].Name}?", 11, 1, false);
+                                                                menuPosition = 0;
+                                                                do
+                                                                {
+                                                                    Console.SetCursorPosition(1, 13);
+                                                                    if (menuPosition == 0)
+                                                                    {
+                                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                                        Console.Write("YES");
+                                                                        Console.ResetColor();
+                                                                        Console.Write("                     ");
+                                                                        Console.Write("NO");
+                                                                    }
+                                                                    else if (menuPosition == 1)
+                                                                    {
+                                                                        Console.Write("YES");
+                                                                        Console.Write("                     ");
+                                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                                        Console.Write("NO");
+                                                                        Console.ResetColor();
+                                                                    }
+                                                                    userInput = Console.ReadKey(true).Key;
+                                                                    switch (userInput)
+                                                                    {
+                                                                        case ConsoleKey.RightArrow:
+                                                                            menuPosition = 1;
+                                                                            break;
+                                                                        case ConsoleKey.LeftArrow:
+                                                                            menuPosition = 0;
+                                                                            break;
+                                                                        case ConsoleKey.Enter:
+                                                                            if (menuPosition == 0)
+                                                                            {
+                                                                                player.Gold += player.Weapons[3].Value;
+                                                                                player.Weapons.Remove(player.Weapons[3]);
+                                                                                exit = true;
+                                                                                ctinue = false;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                                menuPosition = 0;
+                                                                                exit = true;
+                                                                            }
+                                                                            break;
+                                                                    }
+                                                                } while (!exit);
+                                                            }
+                                                            break;
+                                                        case ConsoleKey.Escape:
+                                                            inCtinue = false;
+                                                            UserUI.ClearBox(boxes.Boxes[1], 17, 1);
+                                                            menuPosition = 0;
+                                                            break;
+                                                    }
+
+
+                                                } while (inCtinue);
+                                            }
+                                            else if (menuPosition == 1) //Equipment
+                                            {
+                                                menuPosition = 0;
+                                                startRow = 0;
+                                                count = 0;
+                                                bool inCtinue = true;
+                                                int menuLength = player.Equipments.Count() - 1;
+                                                do
+                                                {
+                                                    startRow = 1;
+                                                    count = 0;
+                                                    UserUI.ClearBox(boxes.Boxes[1], 17, 1);
+                                                    UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+
+                                                    foreach (Equipment equipment in player.Equipments)
+                                                    {
+                                                        Console.SetCursorPosition(17, startRow);
+                                                        if (menuPosition == 0 && count == 0 && menuPosition <= menuLength)
+                                                        {
+                                                            Console.ForegroundColor = ConsoleColor.Green;
+                                                            Console.WriteLine(equipment.Name);
+                                                            Console.ResetColor();
+                                                            Console.SetCursorPosition(1, 11);
+                                                            Console.WriteLine(equipment);
+                                                            UserUI.TextFormatter(boxes.Boxes[5], equipment.Description, 16, 1, false);
+                                                        }
+                                                        else if (menuPosition == 1 && count == 1 && menuPosition <= menuLength)
+                                                        {
+                                                            Console.ForegroundColor = ConsoleColor.Green;
+                                                            Console.WriteLine(equipment.Name);
+                                                            Console.ResetColor();
+                                                            Console.SetCursorPosition(1, 11);
+                                                            Console.WriteLine(equipment);
+                                                            UserUI.TextFormatter(boxes.Boxes[5], equipment.Description, 16, 1, false);
+                                                        }
+                                                        else if (menuPosition == 2 && count == 2 && menuPosition <= menuLength)
+                                                        {
+                                                            Console.ForegroundColor = ConsoleColor.Green;
+                                                            Console.WriteLine(equipment.Name);
+                                                            Console.ResetColor();
+                                                            Console.SetCursorPosition(1, 11);
+                                                            Console.WriteLine(equipment);
+                                                            UserUI.TextFormatter(boxes.Boxes[5], equipment.Description, 16, 1, false);
+
+                                                        }
+                                                        else if (menuPosition == 3 && count == 3 && menuPosition <= menuLength)
+                                                        {
+                                                            Console.ForegroundColor = ConsoleColor.Green;
+                                                            Console.WriteLine(equipment.Name);
+                                                            Console.ResetColor();
+                                                            Console.SetCursorPosition(1, 11);
+                                                            Console.WriteLine(equipment);
+                                                            UserUI.TextFormatter(boxes.Boxes[5], equipment.Description, 16, 1, false);
+                                                        }
+                                                        else
+                                                        {
+                                                            Console.WriteLine(equipment.Name);
+                                                        }
+                                                        count++;
+                                                        startRow++;
+                                                    }
+
+                                                    userInput = Console.ReadKey(true).Key;
+                                                    switch (userInput)
+                                                    {
+                                                        case (ConsoleKey.DownArrow):
+                                                            if (menuPosition < menuLength)
+                                                            {
+                                                                menuPosition++;
+                                                            }
+                                                            break;
+                                                        case ConsoleKey.UpArrow:
+                                                            if (menuPosition > 0)
+                                                            {
+                                                                menuPosition--;
+                                                            }
+                                                            break;
+                                                        case ConsoleKey.Enter:
+                                                            if (menuPosition == 0) //Prompts the user if they want to equip item
+                                                            {
+                                                                bool exit = false;
+                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                Console.SetCursorPosition(1, 11);
+                                                                Console.WriteLine($"Would you like to sell {player.Equipments[0].Name}?");
+                                                                menuPosition = 0;
+                                                                do
+                                                                {
+                                                                    Console.SetCursorPosition(1, 13);
+                                                                    if (menuPosition == 0)
+                                                                    {
+                                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                                        Console.Write("YES");
+                                                                        Console.ResetColor();
+                                                                        Console.Write("                     ");
+                                                                        Console.Write("NO");
+                                                                    }
+                                                                    else if (menuPosition == 1)
+                                                                    {
+                                                                        Console.Write("YES");
+                                                                        Console.Write("                     ");
+                                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                                        Console.Write("NO");
+                                                                        Console.ResetColor();
+                                                                    }
+                                                                    userInput = Console.ReadKey(true).Key;
+                                                                    switch (userInput)
+                                                                    {
+                                                                        case ConsoleKey.RightArrow:
+                                                                            menuPosition = 1;
+                                                                            break;
+                                                                        case ConsoleKey.LeftArrow:
+                                                                            menuPosition = 0;
+                                                                            break;
+                                                                        case ConsoleKey.Enter:
+                                                                            if (menuPosition == 0)
+                                                                            {
+                                                                                player.Gold += player.Equipments[0].Value;
+                                                                                player.Equipments.Remove(player.Equipments[0]);
+                                                                                exit = true;
+                                                                                ctinue = false;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                                menuPosition = 0;
+                                                                                exit = true;
+                                                                            }
+                                                                            break;
+                                                                    }
+                                                                } while (!exit);
+                                                            }
+                                                            else if (menuPosition == 1)
+                                                            {
+                                                                bool exit = false;
+                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                Console.SetCursorPosition(1, 11);
+                                                                Console.WriteLine($"Would you like to sell {player.Equipments[1].Name}?");
+                                                                menuPosition = 0;
+                                                                do
+                                                                {
+                                                                    Console.SetCursorPosition(1, 13);
+                                                                    if (menuPosition == 0)
+                                                                    {
+                                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                                        Console.Write("YES");
+                                                                        Console.ResetColor();
+                                                                        Console.Write("                     ");
+                                                                        Console.Write("NO");
+                                                                    }
+                                                                    else if (menuPosition == 1)
+                                                                    {
+                                                                        Console.Write("YES");
+                                                                        Console.Write("                     ");
+                                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                                        Console.Write("NO");
+                                                                        Console.ResetColor();
+                                                                    }
+                                                                    userInput = Console.ReadKey(true).Key;
+                                                                    switch (userInput)
+                                                                    {
+                                                                        case ConsoleKey.RightArrow:
+                                                                            menuPosition = 1;
+                                                                            break;
+                                                                        case ConsoleKey.LeftArrow:
+                                                                            menuPosition = 0;
+                                                                            break;
+                                                                        case ConsoleKey.Enter:
+                                                                            if (menuPosition == 0)
+                                                                            {
+                                                                                player.Gold += player.Equipments[1].Value;
+                                                                                player.Equipments.Remove(player.Equipments[1]);
+                                                                                exit = true;
+                                                                                ctinue = false;
+
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                                menuPosition = 0;
+                                                                                exit = true;
+                                                                            }
+                                                                            break;
+                                                                    }
+                                                                } while (!exit);
+                                                            }
+                                                            else if (menuPosition == 2)
+                                                            {
+                                                                bool exit = false;
+                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                Console.SetCursorPosition(1, 11);
+                                                                Console.WriteLine($"Would you like to sell {player.Equipments[2].Name}?");
+                                                                menuPosition = 0;
+                                                                do
+                                                                {
+                                                                    Console.SetCursorPosition(1, 13);
+                                                                    if (menuPosition == 0)
+                                                                    {
+                                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                                        Console.Write("YES");
+                                                                        Console.ResetColor();
+                                                                        Console.Write("                     ");
+                                                                        Console.Write("NO");
+                                                                    }
+                                                                    else if (menuPosition == 1)
+                                                                    {
+                                                                        Console.Write("YES");
+                                                                        Console.Write("                     ");
+                                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                                        Console.Write("NO");
+                                                                        Console.ResetColor();
+                                                                    }
+                                                                    userInput = Console.ReadKey(true).Key;
+                                                                    switch (userInput)
+                                                                    {
+                                                                        case ConsoleKey.RightArrow:
+                                                                            menuPosition = 1;
+                                                                            break;
+                                                                        case ConsoleKey.LeftArrow:
+                                                                            menuPosition = 0;
+                                                                            break;
+                                                                        case ConsoleKey.Enter:
+                                                                            if (menuPosition == 0)
+                                                                            {
+                                                                                player.Gold += player.Equipments[3].Value;
+                                                                                player.Equipments.Remove(player.Equipments[3]);
+                                                                                exit = true;
+                                                                                ctinue = false;
+
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                                menuPosition = 0;
+                                                                                exit = true;
+                                                                            }
+                                                                            break;
+                                                                    }
+                                                                } while (!exit);
+                                                            }
+                                                            else if (menuPosition == 3)
+                                                            {
+                                                                bool exit = false;
+                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                Console.SetCursorPosition(1, 11);
+                                                                Console.WriteLine($"Would you like to sell {player.Equipments[3].Name}?");
+                                                                menuPosition = 0;
+                                                                do
+                                                                {
+                                                                    Console.SetCursorPosition(1, 13);
+                                                                    if (menuPosition == 0)
+                                                                    {
+                                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                                        Console.Write("YES");
+                                                                        Console.ResetColor();
+                                                                        Console.Write("                     ");
+                                                                        Console.Write("NO");
+                                                                    }
+                                                                    else if (menuPosition == 1)
+                                                                    {
+                                                                        Console.Write("YES");
+                                                                        Console.Write("                     ");
+                                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                                        Console.Write("NO");
+                                                                        Console.ResetColor();
+                                                                    }
+                                                                    userInput = Console.ReadKey(true).Key;
+                                                                    switch (userInput)
+                                                                    {
+                                                                        case ConsoleKey.RightArrow:
+                                                                            menuPosition = 1;
+                                                                            break;
+                                                                        case ConsoleKey.LeftArrow:
+                                                                            menuPosition = 0;
+                                                                            break;
+                                                                        case ConsoleKey.Enter:
+                                                                            if (menuPosition == 0)
+                                                                            {
+
+                                                                                player.Gold += player.Equipments[3].Value;
+                                                                                player.Equipments.Remove(player.Equipments[3]);
+                                                                                exit = true;
+                                                                                ctinue = false;
+
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                                menuPosition = 0;
+                                                                                exit = true;
+                                                                            }
+                                                                            break;
+                                                                    }
+                                                                } while (!exit);
+                                                            }
+                                                            break;
+                                                        case ConsoleKey.Escape:
+                                                            inCtinue = false;
+                                                            menuPosition = 0;
+                                                            UserUI.ClearBox(boxes.Boxes[1], 17, 1);
+
+                                                            break;
+                                                    }
+
+                                                } while (inCtinue);
+
+                                            }
+                                            else if (menuPosition == 2) //Items
+                                            {
+                                                {
+                                                    menuPosition = 0;
+                                                    startRow = 0;
+                                                    count = 0;
+                                                    bool inCtinue = true;
+                                                    int menuLength = player.Items.Count() - 1;
+                                                    do
+                                                    {
+                                                        startRow = 1;
+                                                        count = 0;
+                                                        UserUI.ClearBox(boxes.Boxes[1], 17, 1);
+                                                        UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                        foreach (Item item in player.Items)
+                                                        {
+                                                            Console.SetCursorPosition(17, startRow);
+                                                            if (menuPosition == 0 && count == 0 && menuPosition <= menuLength)
+                                                            {
+                                                                Console.ForegroundColor = ConsoleColor.Green;
+                                                                Console.WriteLine(item.Name + " X " + item.Count);
+                                                                Console.ResetColor();
+                                                                UserUI.TextFormatter(boxes.Boxes[5], item.Description, 11, 1, false);
+                                                            }
+                                                            else if (menuPosition == 1 && count == 1 && menuPosition <= menuLength)
+                                                            {
+                                                                Console.ForegroundColor = ConsoleColor.Green;
+                                                                Console.WriteLine(item.Name + " X " + item.Count);
+                                                                Console.ResetColor();
+                                                                UserUI.TextFormatter(boxes.Boxes[5], item.Description, 11, 1, false);
+                                                            }
+                                                            else if (menuPosition == 2 && count == 2 && menuPosition <= menuLength)
+                                                            {
+                                                                Console.ForegroundColor = ConsoleColor.Green;
+                                                                Console.WriteLine(item.Name + " X " + item.Count);
+                                                                Console.ResetColor();
+                                                                UserUI.TextFormatter(boxes.Boxes[5], item.Description, 11, 1, false);
+                                                            }
+                                                            else if (menuPosition == 3 && count == 3 && menuPosition <= menuLength)
+                                                            {
+                                                                Console.ForegroundColor = ConsoleColor.Green;
+                                                                Console.WriteLine(item.Name + " X " + item.Count);
+                                                                Console.ResetColor();
+                                                                UserUI.TextFormatter(boxes.Boxes[5], item.Description, 11, 1, false);
+                                                            }
+                                                            else
+                                                            {
+                                                                Console.WriteLine(item.Name + " X " + item.Count);
+                                                            }
+                                                            count++;
+                                                            startRow++;
+                                                        }
+                                                        userInput = Console.ReadKey(true).Key;
+                                                        switch (userInput)
+                                                        {
+                                                            case (ConsoleKey.DownArrow):
+                                                                if (menuPosition < menuLength)
+                                                                {
+                                                                    menuPosition++;
+                                                                }
+                                                                break;
+                                                            case ConsoleKey.UpArrow:
+                                                                if (menuPosition > 0)
+                                                                {
+                                                                    menuPosition--;
+                                                                }
+                                                                break;
+                                                            case ConsoleKey.Enter:
+                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
+                                                                if (menuPosition == 0)
+                                                                {
+                                                                    Console.SetCursorPosition(1, 11);
+
+                                                                    inCtinue = false;
+                                                                }
+                                                                else if (menuPosition == 1)
+                                                                {
+                                                                    Console.SetCursorPosition(1, 11);
+
+                                                                    inCtinue = false;
+                                                                }
+                                                                else if (menuPosition == 2)
+                                                                {
+                                                                    Console.SetCursorPosition(1, 11);
+
+                                                                    inCtinue = false;
+                                                                }
+                                                                else if (menuPosition == 3)
+                                                                {
+                                                                    Console.SetCursorPosition(1, 11);
+
+                                                                    inCtinue = false;
+                                                                    //UserUI.ClearBox(boxes.Boxes[3], 46, 1);
+                                                                }
+                                                                break;
+                                                            case ConsoleKey.Escape:
+                                                                inCtinue = false;
+                                                                menuPosition = 0;
+                                                                break;
+                                                        }
+                                                        UserUI.ClearBox(boxes.Boxes[1], 17, 1);
+                                                    } while (inCtinue);
+                                                }
+                                            }
+                                            else if (menuPosition == 3) //Exit
+                                            {
+                                                ctinue = false;
+                                                UserUI.ClearBox(boxes.Boxes[1], 17, 1);
+                                                menuPosition = 0;
+                                                break;
+                                            }
+                                            break;
+                                        case ConsoleKey.Escape:
+                                            ctinue = false;
+                                            UserUI.ClearBox(boxes.Boxes[1], 17, 1);
+                                            menuPosition = 0;
+                                            break;
+                                    }
+                                } while (ctinue);
+                            } while (ctinue);
                         }
                         else if (menuPosition == 2) //Leave
                         {
@@ -2357,7 +3521,6 @@ namespace DungeonLibrary
                                         {
                                             exit = true;
                                             leaveShop = true;
-                                            player.Life = 0;
                                         }
                                         else
                                         {
@@ -2370,7 +3533,6 @@ namespace DungeonLibrary
                             } while (!exit);
                         }
                         break;
-
                 }
             } while (!leaveShop);
         }
