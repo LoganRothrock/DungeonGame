@@ -269,7 +269,7 @@ namespace DungeonLibrary
                             Console.ForegroundColor = ConsoleColor.Green;
                             Console.WriteLine(race);
                             Console.ResetColor();
-                            UserUI.TextFormatter(raceInfo, "Tall and proud humanoids. Fights quick and efficently. +5 to Evasion, +5 to Dexterity, -10 to Health, 6, 21, false", 6, 21, false);
+                            UserUI.TextFormatter(raceInfo, "Tall and proud humanoids. Fights quick and efficently. +5 to Evasion, +5 to Dexterity, -10 to Health", 6, 21, false);
                         }
                         else if (menuPosition == 2 && count == 2)
                         {
@@ -2690,7 +2690,7 @@ namespace DungeonLibrary
                                         break;
                                     case ConsoleKey.Escape:
                                         ctinue = false;
-                                        UserUI.ClearBox(boxes.Boxes[1], 17, 1);
+                                        UserUI.ClearBox(boxes.Boxes[1], 17, 2);
                                         menuPosition = 0;
                                         break;
                                 }
@@ -2701,12 +2701,15 @@ namespace DungeonLibrary
                         {
                             do
                             {
-                                startRow = 1;
+                                ctinue = true;
+                                startRow = 2;
                                 count = 0;
+                                menuPosition = 0;
                                 do
                                 {
-                                    startRow = 1;
+                                    startRow = 2;
                                     count = 0;
+                                    ctinue = true;
                                     UserUI.ClearBox(boxes.Boxes[5], 1, 11);
                                     foreach (string action in invActions)
                                     {
@@ -2746,7 +2749,7 @@ namespace DungeonLibrary
                                     switch (userInput)
                                     {
                                         case (ConsoleKey.DownArrow):
-                                            if (menuPosition < 3)
+                                            if (menuPosition < 2)
                                             {
                                                 menuPosition++;
                                             }
@@ -3130,7 +3133,7 @@ namespace DungeonLibrary
                                                             }
                                                             break;
                                                         case ConsoleKey.Enter:
-                                                            if (menuPosition == 0) //Prompts the user if they want to equip item
+                                                            if (menuPosition == 0) //Prompts the user if they want to sell item
                                                             {
                                                                 bool exit = false;
                                                                 UserUI.ClearBox(boxes.Boxes[5], 1, 11);
@@ -3358,110 +3361,6 @@ namespace DungeonLibrary
                                                 } while (inCtinue);
 
                                             }
-                                            else if (menuPosition == 2) //Items
-                                            {
-                                                {
-                                                    menuPosition = 0;
-                                                    startRow = 0;
-                                                    count = 0;
-                                                    bool inCtinue = true;
-                                                    int menuLength = player.Items.Count() - 1;
-                                                    do
-                                                    {
-                                                        startRow = 1;
-                                                        count = 0;
-                                                        UserUI.ClearBox(boxes.Boxes[1], 17, 1);
-                                                        UserUI.ClearBox(boxes.Boxes[5], 1, 11);
-                                                        foreach (Item item in player.Items)
-                                                        {
-                                                            Console.SetCursorPosition(17, startRow);
-                                                            if (menuPosition == 0 && count == 0 && menuPosition <= menuLength)
-                                                            {
-                                                                Console.ForegroundColor = ConsoleColor.Green;
-                                                                Console.WriteLine(item.Name + " X " + item.Count);
-                                                                Console.ResetColor();
-                                                                UserUI.TextFormatter(boxes.Boxes[5], item.Description, 11, 1, false);
-                                                            }
-                                                            else if (menuPosition == 1 && count == 1 && menuPosition <= menuLength)
-                                                            {
-                                                                Console.ForegroundColor = ConsoleColor.Green;
-                                                                Console.WriteLine(item.Name + " X " + item.Count);
-                                                                Console.ResetColor();
-                                                                UserUI.TextFormatter(boxes.Boxes[5], item.Description, 11, 1, false);
-                                                            }
-                                                            else if (menuPosition == 2 && count == 2 && menuPosition <= menuLength)
-                                                            {
-                                                                Console.ForegroundColor = ConsoleColor.Green;
-                                                                Console.WriteLine(item.Name + " X " + item.Count);
-                                                                Console.ResetColor();
-                                                                UserUI.TextFormatter(boxes.Boxes[5], item.Description, 11, 1, false);
-                                                            }
-                                                            else if (menuPosition == 3 && count == 3 && menuPosition <= menuLength)
-                                                            {
-                                                                Console.ForegroundColor = ConsoleColor.Green;
-                                                                Console.WriteLine(item.Name + " X " + item.Count);
-                                                                Console.ResetColor();
-                                                                UserUI.TextFormatter(boxes.Boxes[5], item.Description, 11, 1, false);
-                                                            }
-                                                            else
-                                                            {
-                                                                Console.WriteLine(item.Name + " X " + item.Count);
-                                                            }
-                                                            count++;
-                                                            startRow++;
-                                                        }
-                                                        userInput = Console.ReadKey(true).Key;
-                                                        switch (userInput)
-                                                        {
-                                                            case (ConsoleKey.DownArrow):
-                                                                if (menuPosition < menuLength)
-                                                                {
-                                                                    menuPosition++;
-                                                                }
-                                                                break;
-                                                            case ConsoleKey.UpArrow:
-                                                                if (menuPosition > 0)
-                                                                {
-                                                                    menuPosition--;
-                                                                }
-                                                                break;
-                                                            case ConsoleKey.Enter:
-                                                                UserUI.ClearBox(boxes.Boxes[5], 1, 11);
-                                                                if (menuPosition == 0)
-                                                                {
-                                                                    Console.SetCursorPosition(1, 11);
-
-                                                                    inCtinue = false;
-                                                                }
-                                                                else if (menuPosition == 1)
-                                                                {
-                                                                    Console.SetCursorPosition(1, 11);
-
-                                                                    inCtinue = false;
-                                                                }
-                                                                else if (menuPosition == 2)
-                                                                {
-                                                                    Console.SetCursorPosition(1, 11);
-
-                                                                    inCtinue = false;
-                                                                }
-                                                                else if (menuPosition == 3)
-                                                                {
-                                                                    Console.SetCursorPosition(1, 11);
-
-                                                                    inCtinue = false;
-                                                                    //UserUI.ClearBox(boxes.Boxes[3], 46, 1);
-                                                                }
-                                                                break;
-                                                            case ConsoleKey.Escape:
-                                                                inCtinue = false;
-                                                                menuPosition = 0;
-                                                                break;
-                                                        }
-                                                        UserUI.ClearBox(boxes.Boxes[1], 17, 1);
-                                                    } while (inCtinue);
-                                                }
-                                            }
                                             else if (menuPosition == 3) //Exit
                                             {
                                                 ctinue = false;
@@ -3472,7 +3371,7 @@ namespace DungeonLibrary
                                             break;
                                         case ConsoleKey.Escape:
                                             ctinue = false;
-                                            UserUI.ClearBox(boxes.Boxes[1], 17, 1);
+                                            UserUI.ClearBox(boxes.Boxes[1], 17, 2);
                                             menuPosition = 0;
                                             break;
                                     }
@@ -3486,7 +3385,7 @@ namespace DungeonLibrary
                             Console.SetCursorPosition(1, 11);
                             UserUI.TextFormatter(boxes.Boxes[6], "Are You sure you want to Leave?", 11, 1, false);
                             Console.SetCursorPosition(1, 12);
-                            UserUI.TextFormatter(boxes.Boxes[6], $"You will get another shop after beating {score + 5} more monsters", 13, 1, false);
+                            UserUI.TextFormatter(boxes.Boxes[6], $"You will get another shop after beating {player.Score + 5} more monsters", 13, 1, false);
                             menuPosition = 0;
                             do
                             {
@@ -3533,6 +3432,7 @@ namespace DungeonLibrary
                             } while (!exit);
                         }
                         break;
+
                 }
             } while (!leaveShop);
         }
